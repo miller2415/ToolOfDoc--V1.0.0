@@ -31,30 +31,34 @@ CreateCSV(CSVTitle)
 #-------------------------------------------------------------------------------------------------------------------------------#
 root = tk.Tk()
 root.title('RecordTool')#title
-#root.configure(bg="#000000")#背景顏色（黑）
+
+bg1 = "#FF79BC"
+fg1 = "#272727"
+root.configure(bg=bg1)#背景顏色（#6C6C6C）
+fontType = 'Arial'
 
 #print(root.winfo_screenwidth()) #輸出螢幕寬度
 #print(root.winfo_screenheight()) #輸出螢幕高度
 #Count=0    #count
-w=700  #width
-r=200  #height
+w=650  #width
+r=250  #height
 x=500  #與視窗左上x的距離
 y=200  #與視窗左上y的距離
 root.geometry('%dx%d+%d+%d' % (w,r,x,y))
 #-------------------------------------------------------------------------------------------------------------------------------#
-TopLabel    =   tk.Label(root,text='洗方塊紀錄工具',font=('',20,"bold"))
-ValueLabel  =   tk.Label(root,text='顆數 : ',font=('',14,"bold"))
-ServerLabel =   tk.Label(root,text='伺服器 : ',font=('',14,"bold"))
-TypeLabel   =   tk.Label(root,text='方塊型態 : ',font=('',14,"bold"))
-LondaLabel  =   tk.Label(root,text='~',font=('',14,"bold"))
-L12         =   tk.Label(root,font=('',16,"bold"))
-L5ans       =   tk.Label(root,font=('',16,"bold"))
-TimeInfo    =   tk.Label(root,font=('',16,"bold"))
+TopLabel    =   tk.Label(root,text="洗方塊紀錄工具",bg=bg1,fg=fg1,font=(fontType,18,"bold"))
+ValueLabel  =   tk.Label(root,text='顆數 : ',bg=bg1,fg=fg1,font=(fontType,12,"bold"))
+ServerLabel =   tk.Label(root,text='伺服器 : ',bg=bg1,fg=fg1,font=(fontType,12,"bold"))
+TypeLabel   =   tk.Label(root,text='方塊型態 : ',bg=bg1,fg=fg1,font=(fontType,12,"bold"))
+LondaLabel  =   tk.Label(root,text='~',bg=bg1,fg=fg1,font=(fontType,14,"bold"))
+L12         =   tk.Label(root,bg=bg1,fg=fg1,font=(fontType,14,"bold"))
+L5ans       =   tk.Label(root,bg=bg1,fg=fg1,font=(fontType,14,"bold"))
+TimeInfo    =   tk.Label(root,bg=bg1,fg=fg1,font=(fontType,14,"bold"))
 #CountInfo   =   tk.Label(root,font=('',16,"bold"))
 
 #-------------------------------------------------------------------------------------------------------------------------------#
-E1=tk.Entry(root,width=6)
-E2=tk.Entry(root,width=6)
+E1=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=5)
+E2=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=5)
 #-------------------------------------------------------------------------------------------------------------------------------#
 
 Server      =    {0:"艾麗亞",1:"普力特",2:"琉德",3:"優依娜",4:"愛麗西亞",5:"殺人鯨"}
@@ -117,7 +121,9 @@ def math():
 
 
 CheckButtom=tk.Button(root,text='Enter',relief="ridge",
-            activebackground='#BE77FF',#設定滑鼠位於按鈕時的背景顏色
+            background='#FF79BC',
+            border=5,
+            activebackground='#B15BFF',#設定滑鼠位於按鈕時的背景顏色
             activeforeground='#FFFFFF',#設定滑鼠位於按鈕時的前景顏色
             state=tk.NORMAL,#設定按鈕的狀態
             cursor='heart',
@@ -128,12 +134,12 @@ TopLabel.grid(row=0,column=0)#顯示的位置
 ServerLabel.grid(row=1,column=0)
 
 for val1, Server1 in Server.items():
-    R1=tk.Radiobutton(root,text=Server1,variable=ServerVar,value=val1,command=Selection1)
+    R1=tk.Radiobutton(root,text=Server1,variable=ServerVar,value=val1,command=Selection1,bg=bg1,activebackground=bg1,font=(fontType,10,"bold"))
     R1.grid(row=1,column=1+val1)
 
 TypeLabel.grid(row=2,column=0)
 for val2, Tpye in Type.items():
-    R2=tk.Radiobutton (root,text=Tpye,variable=TypeVar, value=val2,command=Selection2)
+    R2=tk.Radiobutton (root,text=Tpye,variable=TypeVar, value=val2,command=Selection2,bg=bg1,activebackground=bg1,font=(fontType,10,"bold"))
     R2.grid(row=2,column=1+val2)
 
 ValueLabel.grid(row=3,column=0)
