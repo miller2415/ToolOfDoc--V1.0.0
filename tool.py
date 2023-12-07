@@ -36,7 +36,7 @@ root.title('RecordTool')#title
 
 bg = "#323232" #323232
 fg = "#FCFCFC" #FCFCFC #FFFFFF
-#root.configure(bg=bg1)#背景顏色 macOS 原色HEX #323232 RGB (50,50,50)
+root.configure(bg=bg)#背景顏色 macOS 原色HEX #323232 RGB (50,50,50)
 
 fontType = 'Arial'
 
@@ -126,7 +126,7 @@ def math():
 CheckButtom=tk.Button(root,text='Enter',relief="ridge",
             background=fg,
             border=2,
-            activebackground='#191970',#設定滑鼠位於按鈕時的背景顏色
+            #activebackground='#191970',#設定滑鼠位於按鈕時的背景顏色
             activeforeground='#191970',#設定滑鼠位於按鈕時的前景顏色
             state=tk.NORMAL,#設定按鈕的狀態
             cursor='heart',
@@ -137,12 +137,29 @@ TopLabel.grid(row=0,column=0)#顯示的位置
 ServerLabel.grid(row=1,column=0)
 
 for val1, Server1 in Server.items():
-    R1=tk.Radiobutton(root,text=Server1,variable=ServerVar,value=val1,command=Selection1,font=(fontType,10,"bold"),bg=bg,fg=fg)
+    R1=tk.Radiobutton(root,
+                      text=Server1,
+                      variable=ServerVar,
+                      value=val1,command=Selection1,
+                      font=(fontType,10,"bold"),
+                      bg=bg,
+                      fg=fg,
+                      activebackground=bg,
+                      selectcolor=bg)
     R1.grid(row=1,column=1+val1)
 
 TypeLabel.grid(row=2,column=0)
 for val2, Tpye in Type.items():
-    R2=tk.Radiobutton (root,text=Tpye,variable=TypeVar, value=val2,command=Selection2,font=(fontType,10,"bold"),bg=bg,fg=fg)
+    R2=tk.Radiobutton (root,
+                       text=Tpye,
+                       variable=TypeVar, 
+                       value=val2,
+                       command=Selection2,
+                       font=(fontType,10,"bold"),
+                       bg=bg,
+                       fg=fg,
+                       activebackground=bg,
+                       selectcolor=bg)
     R2.grid(row=2,column=1+val2)
 
 ValueLabel.grid(row=3,column=0)
