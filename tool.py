@@ -2,8 +2,6 @@ import datetime
 import csv
 import tkinter as tk
 
-#tutorial-env\Scripts\activate #使用虛擬環境windows 在終端機選擇當前目錄 使用虛擬環境
-#source tutorial-env/bin/activate #使用虛擬環境MacOS 在終端機選擇當前目錄 使用虛擬環境
 #print(tk.TkVersion)版本8.6
 #-------------------------------------------------------------------------------------------------------------------------------#
 def CreateCSV (title) :
@@ -25,24 +23,19 @@ def WriteCSV (title,time,Server,type,E1,E2,E12,money):
 
 CSVTitle = (str(datetime.datetime.now().year)    + '-' + 
          str(datetime.datetime.now().month)   + '-' +
-         str(datetime.datetime.now().day)     + '_' +
-         str(datetime.datetime.now().hour)    + '.csv')
+         str(datetime.datetime.now().day)     + '.csv')
 
 
 CreateCSV(CSVTitle)
 #-------------------------------------------------------------------------------------------------------------------------------#
 root = tk.Tk()
 root.title('RecordTool')#title
-
 bg = "#323232" #323232
-fg = "#FCFCFC" #FCFCFC #FFFFFF
-root.configure(bg=bg)#背景顏色 macOS 原色HEX #323232 RGB (50,50,50)
-
+fg = "#FCFCFC" #FCFCFC
+root.configure(bg=bg)#背景顏色
 fontType = 'Arial'
-
 #print(root.winfo_screenwidth()) #輸出螢幕寬度
 #print(root.winfo_screenheight()) #輸出螢幕高度
-#Count=0    #count
 w=650  #width
 r=250  #height
 x=500  #與視窗左上x的距離
@@ -57,25 +50,17 @@ LondaLabel  =   tk.Label(root,text='~',font=(fontType,14,"bold"),bg=bg,fg=fg)
 L12         =   tk.Label(root,font=(fontType,14,"bold"),bg=bg,fg=fg)
 L5ans       =   tk.Label(root,font=(fontType,14,"bold"),bg=bg,fg=fg)
 TimeInfo    =   tk.Label(root,font=(fontType,14,"bold"),bg=bg,fg=fg)
-#CountInfo   =   tk.Label(root,font=('',16,"bold"))
-
 #-------------------------------------------------------------------------------------------------------------------------------#
 E1=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=1)
 E2=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=1)
 #-------------------------------------------------------------------------------------------------------------------------------#
-
 Server      =    {0:"艾麗亞",1:"普力特",2:"琉德",3:"優依娜",4:"愛麗西亞",5:"殺人鯨"}
 ServerVar   =    tk.IntVar()
 ServerVar.set(0)
-def Selection1 ():
-    print(Server.get(ServerVar.get()))
 
 Type        =   {0:"閃炫",1:"結合"}
 TypeVar     =   tk.IntVar()
 TypeVar.set(0)
-def Selection2 ():
-    print(Type.get(TypeVar.get())) 
-
 #-------------------------------------------------------------------------------------------------------------------------------#
 def math():
     if TypeVar.get():
@@ -119,10 +104,6 @@ def math():
                      (eval(E1.get())-eval(E2.get())),
                      str((eval(E1.get())-eval(E2.get()))*money))
             
-    
-    
-
-
 CheckButtom=tk.Button(root,text='Enter',relief="ridge",
             background=fg,
             border=2,
@@ -131,7 +112,6 @@ CheckButtom=tk.Button(root,text='Enter',relief="ridge",
             state=tk.NORMAL,#設定按鈕的狀態
             cursor='heart',
             command=math)
-
 #-------------------------------------------------------------------------------------------------------------------------------#
 TopLabel.grid(row=0,column=0)#顯示的位置
 ServerLabel.grid(row=1,column=0)
@@ -140,7 +120,7 @@ for val1, Server1 in Server.items():
     R1=tk.Radiobutton(root,
                       text=Server1,
                       variable=ServerVar,
-                      value=val1,command=Selection1,
+                      value=val1,
                       font=(fontType,10,"bold"),
                       bg=bg,
                       fg=fg,
@@ -154,7 +134,6 @@ for val2, Tpye in Type.items():
                        text=Tpye,
                        variable=TypeVar, 
                        value=val2,
-                       command=Selection2,
                        font=(fontType,10,"bold"),
                        bg=bg,
                        fg=fg,
@@ -167,10 +146,9 @@ E1.grid(row=3,column=1)
 LondaLabel.grid(row=3,column=2)
 E2.grid(row=3,column=3)
 CheckButtom.grid(row=3,column=4)
-#CountInfo.grid(row=3,column=5)
-L12.grid(row=5,column=0)
-L5ans.grid(row=6,column=0)
-TimeInfo.grid(row=7,column=0)
+L12.grid(row=4,column=0)
+L5ans.grid(row=5,column=0)
+TimeInfo.grid(row=6,column=0)
 #-------------------------------------------------------------------------------------------------------------------------------#
 root.mainloop()
 
