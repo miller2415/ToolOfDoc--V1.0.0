@@ -3,7 +3,7 @@ import csv
 import tkinter as tk
 
 #tutorial-env\Scripts\activate #使用虛擬環境windows 在終端機選擇當前目錄 使用虛擬環境
-#source tutorial-env\Scripts\activate #使用虛擬環境MacOS 在終端機選擇當前目錄 使用虛擬環境
+#source tutorial-env/bin/activate #使用虛擬環境MacOS 在終端機選擇當前目錄 使用虛擬環境
 #print(tk.TkVersion)版本8.6
 #-------------------------------------------------------------------------------------------------------------------------------#
 def CreateCSV (title) :
@@ -27,14 +27,17 @@ CSVTitle = (str(datetime.datetime.now().year)    + '-' +
          str(datetime.datetime.now().month)   + '-' +
          str(datetime.datetime.now().day)     + '_' +
          str(datetime.datetime.now().hour)    + '.csv')
+
+
 CreateCSV(CSVTitle)
 #-------------------------------------------------------------------------------------------------------------------------------#
 root = tk.Tk()
 root.title('RecordTool')#title
 
-bg1 = "#FF79BC"
-fg1 = "#272727"
-root.configure(bg=bg1)#背景顏色（#6C6C6C）
+bg = "#323232" #323232
+fg = "#FCFCFC" #FCFCFC #FFFFFF
+#root.configure(bg=bg1)#背景顏色 macOS 原色HEX #323232 RGB (50,50,50)
+
 fontType = 'Arial'
 
 #print(root.winfo_screenwidth()) #輸出螢幕寬度
@@ -46,19 +49,19 @@ x=500  #與視窗左上x的距離
 y=200  #與視窗左上y的距離
 root.geometry('%dx%d+%d+%d' % (w,r,x,y))
 #-------------------------------------------------------------------------------------------------------------------------------#
-TopLabel    =   tk.Label(root,text="洗方塊紀錄工具",bg=bg1,fg=fg1,font=(fontType,18,"bold"))
-ValueLabel  =   tk.Label(root,text='顆數 : ',bg=bg1,fg=fg1,font=(fontType,12,"bold"))
-ServerLabel =   tk.Label(root,text='伺服器 : ',bg=bg1,fg=fg1,font=(fontType,12,"bold"))
-TypeLabel   =   tk.Label(root,text='方塊型態 : ',bg=bg1,fg=fg1,font=(fontType,12,"bold"))
-LondaLabel  =   tk.Label(root,text='~',bg=bg1,fg=fg1,font=(fontType,14,"bold"))
-L12         =   tk.Label(root,bg=bg1,fg=fg1,font=(fontType,14,"bold"))
-L5ans       =   tk.Label(root,bg=bg1,fg=fg1,font=(fontType,14,"bold"))
-TimeInfo    =   tk.Label(root,bg=bg1,fg=fg1,font=(fontType,14,"bold"))
+TopLabel    =   tk.Label(root,text="洗方塊紀錄工具",font=(fontType,18,"bold"),bg=bg,fg=fg)
+ValueLabel  =   tk.Label(root,text='顆數 : ',font=(fontType,12,"bold"),bg=bg,fg=fg)
+ServerLabel =   tk.Label(root,text='伺服器 : ',font=(fontType,12,"bold"),bg=bg,fg=fg)
+TypeLabel   =   tk.Label(root,text='方塊型態 : ',font=(fontType,12,"bold"),bg=bg,fg=fg)
+LondaLabel  =   tk.Label(root,text='~',font=(fontType,14,"bold"),bg=bg,fg=fg)
+L12         =   tk.Label(root,font=(fontType,14,"bold"),bg=bg,fg=fg)
+L5ans       =   tk.Label(root,font=(fontType,14,"bold"),bg=bg,fg=fg)
+TimeInfo    =   tk.Label(root,font=(fontType,14,"bold"),bg=bg,fg=fg)
 #CountInfo   =   tk.Label(root,font=('',16,"bold"))
 
 #-------------------------------------------------------------------------------------------------------------------------------#
-E1=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=5)
-E2=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=5)
+E1=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=1)
+E2=tk.Entry(root,width=6,bg="#FFFFFF",fg="#000000",border=1)
 #-------------------------------------------------------------------------------------------------------------------------------#
 
 Server      =    {0:"艾麗亞",1:"普力特",2:"琉德",3:"優依娜",4:"愛麗西亞",5:"殺人鯨"}
@@ -121,10 +124,10 @@ def math():
 
 
 CheckButtom=tk.Button(root,text='Enter',relief="ridge",
-            background='#FF79BC',
-            border=5,
-            activebackground='#B15BFF',#設定滑鼠位於按鈕時的背景顏色
-            activeforeground='#FFFFFF',#設定滑鼠位於按鈕時的前景顏色
+            background=fg,
+            border=2,
+            activebackground='#191970',#設定滑鼠位於按鈕時的背景顏色
+            activeforeground='#191970',#設定滑鼠位於按鈕時的前景顏色
             state=tk.NORMAL,#設定按鈕的狀態
             cursor='heart',
             command=math)
@@ -134,12 +137,12 @@ TopLabel.grid(row=0,column=0)#顯示的位置
 ServerLabel.grid(row=1,column=0)
 
 for val1, Server1 in Server.items():
-    R1=tk.Radiobutton(root,text=Server1,variable=ServerVar,value=val1,command=Selection1,bg=bg1,activebackground=bg1,font=(fontType,10,"bold"))
+    R1=tk.Radiobutton(root,text=Server1,variable=ServerVar,value=val1,command=Selection1,font=(fontType,10,"bold"),bg=bg,fg=fg)
     R1.grid(row=1,column=1+val1)
 
 TypeLabel.grid(row=2,column=0)
 for val2, Tpye in Type.items():
-    R2=tk.Radiobutton (root,text=Tpye,variable=TypeVar, value=val2,command=Selection2,bg=bg1,activebackground=bg1,font=(fontType,10,"bold"))
+    R2=tk.Radiobutton (root,text=Tpye,variable=TypeVar, value=val2,command=Selection2,font=(fontType,10,"bold"),bg=bg,fg=fg)
     R2.grid(row=2,column=1+val2)
 
 ValueLabel.grid(row=3,column=0)
