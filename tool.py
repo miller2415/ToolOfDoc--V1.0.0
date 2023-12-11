@@ -1,9 +1,15 @@
 import datetime
 import csv
 import tkinter as tk
+import os
+import pyperclip
 
 #print(tk.TkVersion)版本8.6
 #-------------------------------------------------------------------------------------------------------------------------------#
+def CheckCSV (title):
+    if not os.path.isfile(title):
+        CreateCSV(title)
+
 def CreateCSV (title) :
   # 開啟輸出的 CSV 檔案
   with open(title, 'a', newline='') as csvfile:
@@ -26,7 +32,7 @@ CSVTitle = (str(datetime.datetime.now().year)    + '-' +
          str(datetime.datetime.now().day)     + '.csv')
 
 
-CreateCSV(CSVTitle)
+CheckCSV(CSVTitle)
 #-------------------------------------------------------------------------------------------------------------------------------#
 root = tk.Tk()
 root.title('RecordTool')#title
@@ -112,6 +118,23 @@ CheckButtom=tk.Button(root,text='Enter',relief="ridge",
             state=tk.NORMAL,#設定按鈕的狀態
             cursor='heart',
             command=math)
+
+def Copy() :
+    if TypeVar.get():
+        money = 105
+    else:
+        money = 52
+    a1 = '價格計算 : ' + str(eval(E1.get())-eval(E2.get())) + ' * ' + str(money) + '  =  '+ str((eval(E1.get())-eval(E2.get()))*money) + "元"
+    pyperclip.copy(a1)
+
+CopyButtom=tk.Button(root,text='Copy',relief="ridge",
+            background=fg,
+            border=2,
+            #activebackground='#191970',#設定滑鼠位於按鈕時的背景顏色
+            activeforeground='#191970',#設定滑鼠位於按鈕時的前景顏色
+            state=tk.NORMAL,#設定按鈕的狀態
+            cursor='pencil',
+            command=Copy)
 #-------------------------------------------------------------------------------------------------------------------------------#
 TopLabel.grid(row=0,column=0)#顯示的位置
 ServerLabel.grid(row=1,column=0)
@@ -146,6 +169,7 @@ E1.grid(row=3,column=1)
 LondaLabel.grid(row=3,column=2)
 E2.grid(row=3,column=3)
 CheckButtom.grid(row=3,column=4)
+CopyButtom.grid(row=3,column=5)
 L12.grid(row=4,column=0)
 L5ans.grid(row=5,column=0)
 TimeInfo.grid(row=6,column=0)
