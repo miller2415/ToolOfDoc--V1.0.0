@@ -39,8 +39,10 @@ MacOS版本請下載`tool`即可執行
 
 如果不放心可以下載`tool.py`檔案自行觀看內容並執行 #程式碼很亂請見諒
 
-`tool.py`使用的python版本應該3.6以上就可以執行了個人使用3.9以上正常執行且不需額外pip install是簡單的小工具
+`tool.py`使用的python版本應該3.6以上就可以執行了個人使用3.9以上正常執行
 
+pip install pyperclip
+只有這個
 ...
 
 ## 預計更新
