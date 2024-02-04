@@ -67,12 +67,11 @@ ServerVar.set(0)
 Type        =   {0:"閃炫",1:"結合"}
 TypeVar     =   tk.IntVar()
 TypeVar.set(0)
+moneyValue=[52,105]
 #-------------------------------------------------------------------------------------------------------------------------------#
 def math():
-    if TypeVar.get():
-        money = 105
-    else:
-        money = 52
+    money = moneyValue[TypeVar.get()]
+    
 
     text = (str(datetime.datetime.now().year) + '/' + 
                               str(datetime.datetime.now().month)+ '/' +
@@ -80,7 +79,7 @@ def math():
                               str(datetime.datetime.now().hour) + ':' +
                               str(datetime.datetime.now().minute))
     TimeInfo.configure(text=text)
-
+    #check
     try:
         value1 = int(E1.get())
         value2 = int(E2.get())
@@ -98,6 +97,9 @@ def math():
         else:
             L12.configure(text =  '顆數 : '+ str(eval(E1.get())-eval(E2.get())) + ' * ' + str(money))
             L5ans.configure(text = '價格計算 : '+ str((eval(E1.get())-eval(E2.get()))*money))
+
+            a1 = '價格計算 :' + str(E1.get()) + '-' + str(E2.get()) + ' = ' +str(eval(E1.get())-eval(E2.get())) + '*' + str(money) + ' = '+ str((eval(E1.get())-eval(E2.get()))*money) + "元"
+            pyperclip.copy(a1)
             #Count = Count + 1
             #CountInfo.configure(text= '完成次數 : ' + str(Count))
             #寫入檔案
@@ -114,27 +116,12 @@ CheckButtom=tk.Button(root,text='Enter',relief="ridge",
             background=fg,
             border=2,
             #activebackground='#191970',#設定滑鼠位於按鈕時的背景顏色
-            activeforeground='#191970',#設定滑鼠位於按鈕時的前景顏色
+            #activeforeground='#191970',#設定滑鼠位於按鈕時的前景顏色
             state=tk.NORMAL,#設定按鈕的狀態
-            cursor='heart',
+            #cursor='heart',
             command=math)
 
-def Copy() :
-    if TypeVar.get():
-        money = 105
-    else:
-        money = 52
-    a1 = '價格計算 : ' + str(eval(E1.get())-eval(E2.get())) + ' * ' + str(money) + '  =  '+ str((eval(E1.get())-eval(E2.get()))*money) + "元"
-    pyperclip.copy(a1)
 
-CopyButtom=tk.Button(root,text='Copy',relief="ridge",
-            background=fg,
-            border=2,
-            #activebackground='#191970',#設定滑鼠位於按鈕時的背景顏色
-            activeforeground='#191970',#設定滑鼠位於按鈕時的前景顏色
-            state=tk.NORMAL,#設定按鈕的狀態
-            cursor='pencil',
-            command=Copy)
 #-------------------------------------------------------------------------------------------------------------------------------#
 TopLabel.grid(row=0,column=0)#顯示的位置
 ServerLabel.grid(row=1,column=0)
@@ -169,7 +156,6 @@ E1.grid(row=3,column=1)
 LondaLabel.grid(row=3,column=2)
 E2.grid(row=3,column=3)
 CheckButtom.grid(row=3,column=4)
-CopyButtom.grid(row=3,column=5)
 L12.grid(row=4,column=0)
 L5ans.grid(row=5,column=0)
 TimeInfo.grid(row=6,column=0)
