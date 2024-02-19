@@ -2,7 +2,7 @@ import datetime
 import csv
 import tkinter as tk
 import os
-import pyperclip
+#import pyperclip
 
 #print(tk.TkVersion)版本8.6
 #-------------------------------------------------------------------------------------------------------------------------------#
@@ -67,7 +67,7 @@ ServerVar.set(0)
 Type        =   {0:"閃炫",1:"結合"}
 TypeVar     =   tk.IntVar()
 TypeVar.set(0)
-moneyValue=[52,105]
+moneyValue=[54,105]
 #-------------------------------------------------------------------------------------------------------------------------------#
 def math():
     money = moneyValue[TypeVar.get()]
@@ -99,7 +99,7 @@ def math():
             L5ans.configure(text = '價格計算 : '+ str((eval(E1.get())-eval(E2.get()))*money))
 
             a1 = '價格計算 :' + str(E1.get()) + '-' + str(E2.get()) + ' = ' +str(eval(E1.get())-eval(E2.get())) + '*' + str(money) + ' = '+ str((eval(E1.get())-eval(E2.get()))*money) + "元"
-            pyperclip.copy(a1)
+            #pyperclip.copy(a1)
             #Count = Count + 1
             #CountInfo.configure(text= '完成次數 : ' + str(Count))
             #寫入檔案
