@@ -98,7 +98,7 @@ def math():
             L12.configure(text =  '顆數 : '+ str(eval(E1.get())-eval(E2.get())) + ' * ' + str(money))
             L5ans.configure(text = '價格計算 : '+ str((eval(E1.get())-eval(E2.get()))*money))
 
-            a1 = '價格計算 :' + str(E1.get()) + '-' + str(E2.get()) + ' = ' +str(eval(E1.get())-eval(E2.get())) + '*' + str(money) + ' = '+ str((eval(E1.get())-eval(E2.get()))*money) + "元"
+            #a1 = '價格計算 :' + str(E1.get()) + '-' + str(E2.get()) + ' = ' +str(eval(E1.get())-eval(E2.get())) + '*' + str(money) + ' = '+ str((eval(E1.get())-eval(E2.get()))*money) + "元"
             #pyperclip.copy(a1)
             #Count = Count + 1
             #CountInfo.configure(text= '完成次數 : ' + str(Count))
