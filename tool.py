@@ -4,6 +4,7 @@ import tkinter as tk
 import os
 #import pyperclip
 
+#exe pyinstaller -F -w ./tool.py
 #print(tk.TkVersion)版本8.6
 #-------------------------------------------------------------------------------------------------------------------------------#
 def CheckCSV (title):
@@ -67,7 +68,7 @@ ServerVar.set(0)
 Type        =   {0:"閃炫",1:"結合"}
 TypeVar     =   tk.IntVar()
 TypeVar.set(0)
-moneyValue=[54,105]
+moneyValue=[54,108]
 #-------------------------------------------------------------------------------------------------------------------------------#
 def math():
     money = moneyValue[TypeVar.get()]
