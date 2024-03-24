@@ -2,7 +2,9 @@
 
 網頁版更加便利 點及右上方連結即可使用紀錄工具
 
-===>
+===> ＜https://miller2415.github.io/ToolOfDoc--V1.0.0/tool.html＞
+
+
 
 因網頁版更加方便以下暫時不用看
 
