@@ -1,214 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>閃炫結合計算工具</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
-        margin: 0;
-        padding: 0;
-    }
-    h2 {
-        text-align: center;
-        color: #333;
-    }
-    form {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-    select, input[type="number"], button {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 16px;
-    }
-    .shape-options {
-        margin-bottom: 15px;
-    }
-    .shape-options label {
-        margin-right: 20px;
-        font-weight: normal;
-    }
-    .shape-options input[type="radio"] {
-        display: none;
-    }
-    .shape-options label {
-        display: inline-block;
-        cursor: pointer;
-        padding: 8px 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-    }
-    .shape-options label:hover {
-        background-color: #f2f2f2;
-    }
-    .shape-options input[type="radio"]:checked + label {
-        background-color: #007bff;
-        color: #fff;
-    }
-    button {
-        background-color: #007bff;
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #0056b3;
-    }
-    #output {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 10px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    table {
-        max-width: 800px;
-        margin: 20px auto;
-        border-collapse: collapse;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-    th {
-        background-color: #f2f2f2;
-        font-weight: bold;
-        text-align: left;
-    }
-</style>
-</head>
-<body>
-<h2>閃炫結合計算工具</h2>
-<form id="configForm">
-    <label for="server">伺服器:</label>
-    <select id="server" name="server">
-        <option value="愛麗亞">愛麗亞</option>
-        <option value="普利特">普利特</option>
-        <option value="琉德">琉德</option>
-        <option value="優伊娜">優伊娜</option>
-        <option value="愛麗西亞">愛麗西亞</option>
-        <option value="殺人鯨">殺人鯨</option>
-    </select><br>
-    <label for="shape">方塊類型:</label>
-    <div class="shape-options">
-        <input type="radio" id="flashy" name="shape" value="閃炫">
-        <label for="flashy">閃炫</label>
-        <input type="radio" id="combined" name="shape" value="結合">
-        <label for="combined">結合</label>
-    </div>
-    <label for="start">起始顆數:</label>
-    <input type="number" id="start" name="start" min="0"><br>
-    <label for="end">最終顆數:</label>
-    <input type="number" id="end" name="end" min="0"><br>
-    <button type="button" onclick="calculate()">計算</button>
-</form>
-<div id="output"></div>
-<table id="statsTable">
-    <thead>
-        <tr>
-            <th>伺服器</th>
-            <th>方塊類型</th>
-            <th>最初顆數</th>
-            <th>最後顆數</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Table content will be added dynamically -->
-    </tbody>
-</table>
-
-<script>
-// Object to store max start count and min end count for each server and shape
-var serverStats = {};
-
-function calculate() {
-    var server = document.getElementById("server").value;
-    var shape = document.querySelector('input[name="shape"]:checked').value;
-    var startCount = parseInt(document.getElementById("start").value);
-    var endCount = parseInt(document.getElementById("end").value);
-
-    if (startCount <= endCount) {
-        alert("Initial count must be greater than final count.");
-        return;
-    }
-
-    var price;
-    if (shape === "閃炫") {
-        price = (startCount - endCount) * 54;
-    } else if (shape === "結合") {
-        price = (startCount - endCount) * 108;
-    }
-
-    var currentTime = new Date();
-    var formattedTime = currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-
-    var outputDiv = document.getElementById("output");
-    var serverConfig = server + " (" + shape + "): " + startCount + " → " + endCount + " 價格: " + price + " 時間: " + formattedTime;
-    var currentConfig = outputDiv.innerHTML;
-    outputDiv.innerHTML = currentConfig + "<br>" + serverConfig;
-
-    // Update serverStats object
-    if (!serverStats[server]) {
-        serverStats[server] = {};
-    }
-    if (!serverStats[server][shape]) {
-        serverStats[server][shape] = { maxStartCount: startCount, minEndCount: endCount };
-    } else {
-        serverStats[server][shape].maxStartCount = Math.max(serverStats[server][shape].maxStartCount, startCount);
-        serverStats[server][shape].minEndCount = Math.min(serverStats[server][shape].minEndCount, endCount);
-    }
-
-    document.getElementById("start").value = endCount;
-    document.getElementById("end").value = "";
-
-    // Update stats table
-    updateStatsTable();
-}
-
-function updateStatsTable() {
-    var table = document.getElementById("statsTable");
-    var tbody = table.getElementsByTagName('tbody')[0];
-    tbody.innerHTML = '';
-
-    for (var server in serverStats) {
-        for (var shape in serverStats[server]) {
-            var row = tbody.insertRow();
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
-            var cell4 = row.insertCell(3);
-            cell1.innerHTML = server;
-            cell2.innerHTML = shape;
-            cell3.innerHTML = serverStats[server][shape].maxStartCount;
-            cell4.innerHTML = serverStats[server][shape].minEndCount;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>閃炫結合計算工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
         }
-    }
-}
-// Confirm before leaving the page
-window.onbeforeunload = function() {
-    return "Are you sure you want to leave?";
-};
-</script>
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        select,
+        input[type="number"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .shape-options {
+            margin-bottom: 15px;
+        }
+
+        .shape-options label {
+            margin-right: 20px;
+            font-weight: normal;
+        }
+
+        .shape-options input[type="radio"] {
+            display: none;
+        }
+
+        .shape-options label {
+            display: inline-block;
+            cursor: pointer;
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .shape-options label:hover {
+            background-color: #f2f2f2;
+        }
+
+        .shape-options input[type="radio"]:checked+label {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            max-width: 600px;
+            margin: 20px auto;
+            height: 100px;
+            /* 設定高度 */
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: scroll;
+            text-align: center;
+        }
+
+        table {
+            max-width: 600px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>閃炫結合計算工具</h2>
+    <form id="configForm">
+        <label>滑鼠停留在文字上時會顯示功能</label>
+        <label for="account" title="為了防止一個帳號洗完需要更換帳號情況所做的新增">帳號:</label>
+        <select id="account" name="account" onchange="updateStartCount()" title="為了防止一個帳號洗完需要更換帳號情況所做的新增">
+            <option value="帳號1">帳號1</option>
+            <option value="帳號2">帳號2</option>
+            <option value="帳號3">帳號3</option>
+            <option value="帳號4">帳號4</option>
+            <option value="帳號5">帳號5</option>
+            <option value="帳號6">帳號6</option>
+        </select><br>
+        <label for="server" title="請選擇伺服器">伺服器:</label>
+        <select id="server" name="server" onchange="updateStartCount()" title="請選擇伺服器">
+            <option value="愛麗亞">愛麗亞</option>
+            <option value="普利特">普利特</option>
+            <option value="琉德">琉德</option>
+            <option value="優伊娜">優伊娜</option>
+            <option value="愛麗西亞">愛麗西亞</option>
+            <option value="殺人鯨">殺人鯨</option>
+        </select><br>
+        <label for="shape" title="閃炫1:54 結合1:108">方塊類型:</label>
+        <div class="shape-options">
+            <input type="radio" id="flashy" name="shape" value="閃炫" onchange="updateStartCount()">
+            <label for="flashy">閃炫</label>
+            <input type="radio" id="combined" name="shape" value="結合" onchange="updateStartCount()">
+            <label for="combined">結合</label>
+        </div>
+        <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始顆數:</label>
+        <input type="number" id="start" name="start" min="0"><br>
+        <label for="end">最終顆數:</label>
+        <input type="number" id="end" name="end" min="0"><br>
+        <button type="button" onclick="calculate()">計算</button>
+    </form>
+    <div id="output"></div>
+    <div class="center-text">
+        <h3>請記得紀錄後再離開！</h3>
+    </div>
+    <table id="statsTable">
+        <thead>
+            <tr>
+                <th>帳號</th>
+                <th>伺服器</th>
+                <th>方塊類型</th>
+                <th>最初顆數</th>
+                <th>最後顆數</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+
+    <script>
+        // Object to store max start count and min end count for each server and shape
+        var serverStats = {};
+
+        function calculate() {
+            var account = document.getElementById("account").value;
+            var server = document.getElementById("server").value;
+            var shape = document.querySelector('input[name="shape"]:checked').value;
+            var startCount = parseInt(document.getElementById("start").value);
+            var endCount = parseInt(document.getElementById("end").value);
+
+            if (startCount <= endCount) {
+                alert("Initial count must be greater than final count.");
+                return;
+            }
+
+            var price;
+            if (shape === "閃炫") {
+                price = (startCount - endCount) * 54;
+            } else if (shape === "結合") {
+                price = (startCount - endCount) * 108;
+            }
+
+            var currentTime = new Date();
+            var formattedTime = currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+
+            var outputDiv = document.getElementById("output");
+            var serverConfig = account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 價格: " + price + " 時間: " + formattedTime;
+            var currentConfig = outputDiv.innerHTML;
+            outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
+
+            // Update serverStats object
+            if (!serverStats[account]) {
+                serverStats[account] = {};
+            }
+            if (!serverStats[account][server]) {
+                serverStats[account][server] = {};
+            }
+            if (!serverStats[account][server][shape]) {
+                serverStats[account][server][shape] = { maxStartCount: startCount, minEndCount: endCount };
+            } else {
+                serverStats[account][server][shape].maxStartCount = Math.max(serverStats[account][server][shape].maxStartCount, startCount);
+                serverStats[account][server][shape].minEndCount = Math.min(serverStats[account][server][shape].minEndCount, endCount);
+            }
+
+            document.getElementById("start").value = endCount;
+            document.getElementById("end").value = "";
+
+            // Update stats table
+            updateStatsTable();
+        }
+
+        function updateStatsTable() {
+            var table = document.getElementById("statsTable");
+            var tbody = table.getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+
+            for (var account in serverStats) {
+                for (var server in serverStats[account]) {
+                    for (var shape in serverStats[account][server]) {
+                        var row = tbody.insertRow();
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+                        var cell5 = row.insertCell(4);
+                        cell1.innerHTML = account;
+                        cell2.innerHTML = server;
+                        cell3.innerHTML = shape;
+                        cell4.innerHTML = serverStats[account][server][shape].maxStartCount;
+                        cell5.innerHTML = serverStats[account][server][shape].minEndCount;
+                    }
+                }
+            }
+        }
+        function updateStartCount() {
+            var account = document.getElementById("account").value;
+            var server = document.getElementById("server").value;
+            var shape = document.querySelector('input[name="shape"]:checked').value;
+
+            if (serverStats[account] && serverStats[account][server] && serverStats[account][server][shape]) {
+                var endCount = serverStats[account][server][shape].minEndCount;
+                document.getElementById("start").value = endCount;
+            }
+        }
+
+        // Confirm before leaving the page
+        window.onbeforeunload = function () {
+            return "Are you sure you want to leave?";
+        };
+    </script>
 </body>
+
 </html>
