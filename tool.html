@@ -194,10 +194,13 @@
             var endCount = parseInt(document.getElementById("end").value);
 
             if (startCount <= endCount) {
-                alert("Initial count must be greater than final count.");
+                alert("初始顆數必須大於最終顆數");
                 return;
             }
-
+            if (isNaN(endCount)) {
+                alert("請輸入最終顆數。");
+                return;
+            }
             var price;
             if (shape === "閃炫") {
                 price = (startCount - endCount) * 54;
