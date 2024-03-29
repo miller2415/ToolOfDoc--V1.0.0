@@ -237,11 +237,10 @@
             function sortTableByServerOrder(tableData) {
                 var sortedData = [];
 
-                // 遍历服务器顺序数组
+                // 排序
                 for (var i = 0; i < serverOrder.length; i++) {
                     var server = serverOrder[i];
 
-                    // 在表格数据中查找具有当前服务器名称的行，并将其添加到已排序的数据中
                     for (var j = 0; j < tableData.length; j++) {
                         if (tableData[j].server === server) {
                             sortedData.push(tableData[j]);
