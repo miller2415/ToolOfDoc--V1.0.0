@@ -233,6 +233,27 @@
 
             originalServerStats = JSON.parse(JSON.stringify(serverStats));
 
+            var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
+            function sortTableByServerOrder(tableData) {
+                var sortedData = [];
+
+                // 遍历服务器顺序数组
+                for (var i = 0; i < serverOrder.length; i++) {
+                    var server = serverOrder[i];
+
+                    // 在表格数据中查找具有当前服务器名称的行，并将其添加到已排序的数据中
+                    for (var j = 0; j < tableData.length; j++) {
+                        if (tableData[j].server === server) {
+                            sortedData.push(tableData[j]);
+                            break;
+                        }
+                    }
+                }
+
+                return sortedData;
+            }
+
+
             if (startCount <= endCount) {
                 alert("初始顆數必須大於最終顆數");
                 return;
@@ -294,6 +315,8 @@
             var table = document.getElementById("statsTable");
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
+
+            var sortedData = sortTableByServerOrder(serverStats);
 
             for (var account in serverStats) {
                 for (var server in serverStats[account]) {
