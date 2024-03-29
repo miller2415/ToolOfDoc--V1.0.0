@@ -88,7 +88,7 @@
         }
 
         #output {
-            max-width: 600px;
+            max-width: 650px;
             margin: 20px auto;
             height: 100px;
             /* 設定高度 */
@@ -142,8 +142,8 @@
         </select><br>
         <label for="server" title="請選擇伺服器">伺服器:</label>
         <select id="server" name="server" onchange="updateStartCount()" title="請選擇伺服器">
-            <option value="愛麗亞">愛麗亞</option>
-            <option value="普利特">普利特</option>
+            <option value="艾麗亞">艾麗亞</option>
+            <option value="普力特">普力特</option>
             <option value="琉德">琉德</option>
             <option value="優伊娜">優伊娜</option>
             <option value="愛麗西亞">愛麗西亞</option>
@@ -161,10 +161,11 @@
         <label for="end">最終顆數:</label>
         <input type="number" id="end" name="end" min="0"><br>
         <button type="button" onclick="calculate()">計算</button>
+        <button type="button" onclick="undo()">上一步</button>
     </form>
     <div id="output"></div>
     <div class="center-text">
-        <h3>請記得紀錄後再離開！</h3>
+        <h3 title="有本地處存5天 請安心使用">更新網頁重開會有紀錄</h3>
     </div>
     <table id="statsTable">
         <thead>
@@ -186,12 +187,50 @@
         // Object to store max start count and min end count for each server and shape
         var serverStats = {};
 
-        function calculate() {
+
+        var endCountInput = document.getElementById("end");
+        endCountInput.addEventListener("keyup", function (event) {
+            // 检查是否按下 Enter 键（keyCode 为 13）
+            if (event.keyCode === 13) {
+                // 执行计算函数
+                calculate();
+            }
+        });
+
+        window.onload = function () {//讀取網頁存取過的資料
+            loadFromLocalStorage();
+        };
+
+        function loadFromLocalStorage() {//讀取網頁存取過的資料
+            var storedStats = localStorage.getItem('serverStats');
+            if (storedStats) {
+                serverStats = JSON.parse(storedStats);
+                updateStatsTable();
+            }
+        }
+
+        function updateLocalStorage() {//更新
+            localStorage.setItem('serverStats', JSON.stringify(serverStats));
+        }
+
+
+        var originalServerStats;
+        function undo() {
+            if (originalServerStats) {
+                serverStats = originalServerStats; // 恢復數據
+                updateStatsTable(); // 更新
+                updateLocalStorage(); // 更新
+            }
+        }
+
+        function calculate() {//按下計算後處理的東西
             var account = document.getElementById("account").value;
             var server = document.getElementById("server").value;
             var shape = document.querySelector('input[name="shape"]:checked').value;
             var startCount = parseInt(document.getElementById("start").value);
             var endCount = parseInt(document.getElementById("end").value);
+
+            originalServerStats = JSON.parse(JSON.stringify(serverStats));
 
             if (startCount <= endCount) {
                 alert("初始顆數必須大於最終顆數");
@@ -216,11 +255,16 @@
             var formattedTime = currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 
             var outputDiv = document.getElementById("output");
-            var serverConfig = account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 價格: " + price + " 時間: " + formattedTime;
+            var serverConfig = account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price + " 時間: " + formattedTime;
             var currentConfig = outputDiv.innerHTML;
             outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
+            var lines = outputDiv.innerHTML.split("<br>");
+            if (lines.length > 20) {
+                lines.pop(); // 刪除最後一行
+                outputDiv.innerHTML = lines.join("<br>");
+            }
 
-            // Update serverStats object
+            // 更新 serverState
             if (!serverStats[account]) {
                 serverStats[account] = {};
             }
@@ -237,11 +281,15 @@
             document.getElementById("start").value = endCount;
             document.getElementById("end").value = "";
 
-            // Update stats table
+            //更新本地處存
+            updateLocalStorage();
+
+
+            //更新Table
             updateStatsTable();
         }
 
-        function updateStatsTable() {
+        function updateStatsTable() {//更新Table
             var table = document.getElementById("statsTable");
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
@@ -264,6 +312,7 @@
                 }
             }
         }
+
         function updateStartCount() {
             var account = document.getElementById("account").value;
             var server = document.getElementById("server").value;
@@ -275,6 +324,21 @@
             }
         }
 
+        function checkLocalStorageExpiration() {//檢查本地處存是否有過了五天
+            var storedTime = localStorage.getItem('storageTimestamp');
+            if (storedTime) {
+                var currentTime = new Date().getTime();
+                var sixDaysInMillis = 5 * 24 * 60 * 60 * 1000;
+                if (currentTime - parseInt(storedTime) > sixDaysInMillis) {
+                    localStorage.removeItem('serverStats');
+                    localStorage.removeItem('storageTimestamp');
+                    localStorage.setItem('storageTimestamp', new Date().getTime().toString());
+                }
+            } else {
+                localStorage.setItem('storageTimestamp', new Date().getTime().toString());
+            }
+        }
+        checkLocalStorageExpiration();
         // Confirm before leaving the page
         window.onbeforeunload = function () {
             return "Are you sure you want to leave?";
