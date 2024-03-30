@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>閃炫結合計算工具</title>
+    <title>閃炫結合記錄工具</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,6 +31,19 @@
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
+        }
+
+        p {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        p.title {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: gray;
         }
 
         select,
@@ -76,19 +89,33 @@
             color: #fff;
         }
 
-        button {
+        button.calculate {
             background-color: #007bff;
             color: #fff;
             font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
+        button.calculate:hover {
             background-color: #0056b3;
         }
 
+        button.undo {
+            background-color: #b22735;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.undo:hover {
+            background-color: #a21d2a;
+            /* 深红色 */
+        }
+
+        
+
         #output {
-            max-width: 650px;
+            max-width: 620px;
             margin: 20px auto;
             height: 100px;
             padding: 10px;
@@ -127,9 +154,9 @@
 </head>
 
 <body>
-    <h2>閃炫結合計算工具</h2>
+    <h2>閃炫結合記錄工具</h2>
     <form id="configForm">
-        <label title="像照樣">滑鼠停留在文字上時會顯示功能</label>
+        <p title="像這樣" class="title">滑鼠停留在文字上時會顯示功能</p>
         <label for="account" title="帳號切換">帳號:</label>
         <select id="account" name="account" onchange="updateStartCount()" title="帳號切換">
             <option value="帳號1">帳號1</option>
@@ -157,14 +184,14 @@
         </div>
         <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始顆數:</label>
         <input type="number" id="start" name="start" min="0"><br>
-        <label for="end">最終顆數:</label>
+        <label for="end" title="可以直接enter了">最終顆數:</label>
         <input type="number" id="end" name="end" min="0"><br>
-        <button type="button" onclick="calculate()">計算</button>
-        <button type="button" onclick="undo()" title="只能一步 從這邊到辣邊一共五步">上一步</button>
+        <button type="button" class="calculate" onclick="calculate()" title="這顆按鈕很憂鬱請慢慢按">計算</button>
+        <button type="button" class="undo" onclick="undo()" title="從這邊到那邊一共五步">上一步</button>
     </form>
-    <div id="output"></div>
+    <div id="output" title="限制20行"></div>
     <div class="center-text">
-        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料">更新網頁重開會有紀錄</h3>
+        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料">網頁重開會有紀錄</h3>
     </div>
     <table id="statsTable">
         <thead>
@@ -183,24 +210,17 @@
 
 
     <script>
-        // Object to store max start count and min end count for each server and shape
+        // 本地資料與表格資料共用空間
         var serverStats = {};
 
 
-        var endCountInput = document.getElementById("end");
-        endCountInput.addEventListener("keyup", function (event) {
-            // 检查是否按下 Enter 键（keyCode 为 13）
-            if (event.keyCode === 13) {
-                // 执行计算函数
-                calculate();
-            }
-        });
-
+        //-----------------------本機儲存類-----------------------\\
         window.onload = function () {//讀取網頁存取過的資料
             loadFromLocalStorage();
         };
 
-        function loadFromLocalStorage() {//讀取網頁存取過的資料
+        //讀取網頁存取過的資料
+        function loadFromLocalStorage() {
             var storedStats = localStorage.getItem('serverStats');
             if (storedStats) {
                 serverStats = JSON.parse(storedStats);
@@ -208,20 +228,93 @@
             }
         }
 
-        function updateLocalStorage() {//更新
+        //更新
+        function updateLocalStorage() {
             localStorage.setItem('serverStats', JSON.stringify(serverStats));
         }
-
-
-        var originalServerStats;
-        function undo() {
-            if (originalServerStats) {
-                serverStats = originalServerStats; // 恢復數據
-                updateStatsTable(); // 更新
-                updateLocalStorage(); // 更新
-                updateStartCount();
+        //檢查localStorage時間戳章
+        function checkLocalStorageExpiration() {
+            var storedTime = localStorage.getItem('storageTimestamp');
+            if (storedTime) {
+                var currentTime = new Date().getTime();
+                var sixDaysInMillis = 5 * 24 * 60 * 60 * 1000;//檢查是否過五天
+                if (currentTime - parseInt(storedTime) > sixDaysInMillis) {
+                    localStorage.removeItem('serverStats');
+                    localStorage.removeItem('storageTimestamp');
+                    localStorage.setItem('storageTimestamp', new Date().getTime().toString());
+                }
+            } else {
+                localStorage.setItem('storageTimestamp', new Date().getTime().toString());
             }
         }
+        checkLocalStorageExpiration();//執行
+        //-----------------------本機儲存類-----------------------\\
+
+        //-----------------------回上一步類-----------------------\\
+        var originalServerStats1;
+        var originalServerStats2;
+        var originalServerStats3;
+        var originalServerStats4;
+        var originalServerStats5;
+        var UndoCount = 1;
+        function undo() {
+            switch (UndoCount) {
+                case 1:
+                    if (originalServerStats1) {
+                        serverStats = originalServerStats1; // 恢復數據
+                        updateStatsTable(); // 更新
+                        updateLocalStorage(); // 更新
+                        updateStartCount();
+                    }
+                    UndoCount += 1;
+                    break;
+                case 2:
+                    if (originalServerStats2) {
+                        serverStats = originalServerStats2; // 恢復數據
+                        updateStatsTable(); // 更新
+                        updateLocalStorage(); // 更新
+                        updateStartCount();
+                    }
+                    UndoCount += 1;
+                    break;
+                case 3:
+                    if (originalServerStats3) {
+                        serverStats = originalServerStats3; // 恢復數據
+                        updateStatsTable(); // 更新
+                        updateLocalStorage(); // 更新
+                        updateStartCount();
+                    }
+                    UndoCount += 1;
+                    break;
+
+                case 4:
+                    if (originalServerStats4) {
+                        serverStats = originalServerStats4; // 恢復數據
+                        updateStatsTable(); // 更新
+                        updateLocalStorage(); // 更新
+                        updateStartCount();
+                    }
+                    UndoCount += 1;
+                    break;
+
+                case 5:
+                    if (originalServerStats5) {
+                        serverStats = originalServerStats5; // 恢復數據
+                        updateStatsTable(); // 更新
+                        updateLocalStorage(); // 更新
+                        updateStartCount();
+                    }
+                    UndoCount += 1;
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+        //-----------------------回上一步類-----------------------\\
+
+        //-----------------------表格排序類-----------------------\\
         var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
         function sortTableByServerOrder(tableData) {
             var sortedData = [];
@@ -240,18 +333,44 @@
 
             return sortedData;
         }
+        //-----------------------表格排序類-----------------------\\
 
+        //-----------------------按鈕控制類-----------------------\\
+        //監聽鍵盤在最終顆數按下ENTER時會啟動計算按鈕
+        var endCountInput = document.getElementById("end");
+        endCountInput.addEventListener("keyup", function (event) {
+            // 檢查是否按下enter
+            if (event.keyCode === 13) {
+                // 執行函數
+                calculate();
+            }
+        });
 
-        function calculate() {//按下計算後處理的東西
+        //按下計算所需要處理的東西
+        function calculate() {
+            //讀取值
             var account = document.getElementById("account").value;
             var server = document.getElementById("server").value;
             var shape = document.querySelector('input[name="shape"]:checked').value;
             var startCount = parseInt(document.getElementById("start").value);
             var endCount = parseInt(document.getElementById("end").value);
+            //上一步資料存取
+            if (originalServerStats4) {
+                originalServerStats5 = JSON.parse(JSON.stringify(originalServerStats4));
+            }
+            if (originalServerStats3) {
+                originalServerStats4 = JSON.parse(JSON.stringify(originalServerStats3));
+            }
+            if (originalServerStats2) {
+                originalServerStats3 = JSON.parse(JSON.stringify(originalServerStats2));
+            }
+            if (originalServerStats1) {
+                originalServerStats2 = JSON.parse(JSON.stringify(originalServerStats1));
+            }
+            originalServerStats1 = JSON.parse(JSON.stringify(serverStats));
+            UndoCount = 1;
 
-            originalServerStats = JSON.parse(JSON.stringify(serverStats));
-
-
+            //保護
             if (startCount <= endCount) {
                 alert("初始顆數必須大於最終顆數");
                 return;
@@ -264,6 +383,7 @@
                 alert("請輸入最終顆數。");
                 return;
             }
+            //計算
             var price;
             if (shape === "閃炫") {
                 price = (startCount - endCount) * 54;
@@ -271,9 +391,11 @@
                 price = (startCount - endCount) * 108;
             }
 
+            //時間
             var currentTime = new Date();
             var formattedTime = currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 
+            //文字記錄
             var outputDiv = document.getElementById("output");
             var serverConfig = account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price + " 時間: " + formattedTime;
             var currentConfig = outputDiv.innerHTML;
@@ -298,6 +420,7 @@
                 serverStats[account][server][shape].minEndCount = Math.min(serverStats[account][server][shape].minEndCount, endCount);
             }
 
+            //設定起始顆數與最終顆數
             document.getElementById("start").value = endCount;
             document.getElementById("end").value = "";
 
@@ -308,12 +431,16 @@
             //更新Table
             updateStatsTable();
         }
+        //-----------------------按鈕控制類-----------------------\\
 
-        function updateStatsTable() {//更新Table
+        //-----------------------狀態更新類-----------------------\\
+        //更新Table
+        function updateStatsTable() {
             var table = document.getElementById("statsTable");
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
 
+            //依照伺服器排序
             var sortedData = sortTableByServerOrder(serverStats);
 
             for (var account in serverStats) {
@@ -335,6 +462,7 @@
             }
         }
 
+        //切換時輸入起始顆數
         function updateStartCount() {
             var account = document.getElementById("account").value;
             var server = document.getElementById("server").value;
@@ -345,23 +473,10 @@
                 document.getElementById("start").value = endCount;
             }
         }
+        //-----------------------狀態更新類-----------------------\\
 
-        function checkLocalStorageExpiration() {//檢查本地處存是否有過了五天
-            var storedTime = localStorage.getItem('storageTimestamp');
-            if (storedTime) {
-                var currentTime = new Date().getTime();
-                var sixDaysInMillis = 5 * 24 * 60 * 60 * 1000;
-                if (currentTime - parseInt(storedTime) > sixDaysInMillis) {
-                    localStorage.removeItem('serverStats');
-                    localStorage.removeItem('storageTimestamp');
-                    localStorage.setItem('storageTimestamp', new Date().getTime().toString());
-                }
-            } else {
-                localStorage.setItem('storageTimestamp', new Date().getTime().toString());
-            }
-        }
-        checkLocalStorageExpiration();
-        // Confirm before leaving the page
+
+        //離開網頁時詢問
         window.onbeforeunload = function () {
             return "Are you sure you want to leave?";
         };
