@@ -91,7 +91,6 @@
             max-width: 650px;
             margin: 20px auto;
             height: 100px;
-            /* 設定高度 */
             padding: 10px;
             background-color: #fff;
             border-radius: 8px;
@@ -130,9 +129,9 @@
 <body>
     <h2>閃炫結合計算工具</h2>
     <form id="configForm">
-        <label>滑鼠停留在文字上時會顯示功能</label>
-        <label for="account" title="為了防止一個帳號洗完需要更換帳號情況所做的新增">帳號:</label>
-        <select id="account" name="account" onchange="updateStartCount()" title="為了防止一個帳號洗完需要更換帳號情況所做的新增">
+        <label title="像照樣">滑鼠停留在文字上時會顯示功能</label>
+        <label for="account" title="帳號切換">帳號:</label>
+        <select id="account" name="account" onchange="updateStartCount()" title="帳號切換">
             <option value="帳號1">帳號1</option>
             <option value="帳號2">帳號2</option>
             <option value="帳號3">帳號3</option>
@@ -161,11 +160,11 @@
         <label for="end">最終顆數:</label>
         <input type="number" id="end" name="end" min="0"><br>
         <button type="button" onclick="calculate()">計算</button>
-        <button type="button" onclick="undo()">上一步</button>
+        <button type="button" onclick="undo()" title="只能一步 從這邊到辣邊一共五步">上一步</button>
     </form>
     <div id="output"></div>
     <div class="center-text">
-        <h3 title="有本地處存5天 請安心使用">更新網頁重開會有紀錄</h3>
+        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料">更新網頁重開會有紀錄</h3>
     </div>
     <table id="statsTable">
         <thead>
@@ -223,6 +222,25 @@
                 updateStartCount();
             }
         }
+        var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
+        function sortTableByServerOrder(tableData) {
+            var sortedData = [];
+
+            // 排序
+            for (var i = 0; i < serverOrder.length; i++) {
+                var server = serverOrder[i];
+
+                for (var j = 0; j < tableData.length; j++) {
+                    if (tableData[j].server === server) {
+                        sortedData.push(tableData[j]);
+                        break;
+                    }
+                }
+            }
+
+            return sortedData;
+        }
+
 
         function calculate() {//按下計算後處理的東西
             var account = document.getElementById("account").value;
@@ -232,25 +250,6 @@
             var endCount = parseInt(document.getElementById("end").value);
 
             originalServerStats = JSON.parse(JSON.stringify(serverStats));
-
-            var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
-            function sortTableByServerOrder(tableData) {
-                var sortedData = [];
-
-                // 排序
-                for (var i = 0; i < serverOrder.length; i++) {
-                    var server = serverOrder[i];
-
-                    for (var j = 0; j < tableData.length; j++) {
-                        if (tableData[j].server === server) {
-                            sortedData.push(tableData[j]);
-                            break;
-                        }
-                    }
-                }
-
-                return sortedData;
-            }
 
 
             if (startCount <= endCount) {
