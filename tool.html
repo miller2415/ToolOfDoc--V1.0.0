@@ -112,7 +112,18 @@
             /* 深红色 */
         }
 
-        
+        button.del {
+            width: 60px;
+            background-color: #b22735;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.del:hover {
+            background-color: #a21d2a;
+            /* 深红色 */
+        }
 
         #output {
             max-width: 620px;
@@ -190,9 +201,6 @@
         <button type="button" class="undo" onclick="undo()" title="從這邊到那邊一共五步">上一步</button>
     </form>
     <div id="output" title="限制20行"></div>
-    <div class="center-text">
-        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料">網頁重開會有紀錄</h3>
-    </div>
     <table id="statsTable">
         <thead>
             <tr>
@@ -207,12 +215,17 @@
 
         </tbody>
     </table>
+    <div class="center-text">
+        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料">網頁重開會有紀錄</h3>
+        <h3 title="">刪除全部資料按這顆按鈕</h3>
+        <button type="button" class="del" onclick="delLocalStorage()" title="為了防止誤觸最終顆數按d或D這顆才會生效">刪除全部</button>
+    </div>
 
 
     <script>
         // 本地資料與表格資料共用空間
         var serverStats = {};
-
+        var setButton = false;
 
         //-----------------------本機儲存類-----------------------\\
         window.onload = function () {//讀取網頁存取過的資料
@@ -248,6 +261,18 @@
             }
         }
         checkLocalStorageExpiration();//執行
+        function delLocalStorage(){
+            if(setButton){
+                localStorage.removeItem('serverStats');
+                localStorage.removeItem('storageTimestamp');
+                serverStats = {};
+                localStorage.setItem('storageTimestamp', new Date().getTime().toString());
+                updateStatsTable();
+                updateLocalStorage();
+                document.getElementById("start").value = null;
+                setButton = false;
+            }
+        }
         //-----------------------本機儲存類-----------------------\\
 
         //-----------------------回上一步類-----------------------\\
@@ -343,6 +368,9 @@
             if (event.keyCode === 13) {
                 // 執行函數
                 calculate();
+            }
+            if (event.key === 'D' || event.key === 'd') {
+                setButton = true;
             }
         });
 
