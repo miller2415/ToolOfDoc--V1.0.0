@@ -261,7 +261,7 @@
             }
         }
         checkLocalStorageExpiration();//執行
-        function delLocalStorage(){
+        function delLocalStorage(){//刪除
             if(setButton){
                 localStorage.removeItem('serverStats');
                 localStorage.removeItem('storageTimestamp');
@@ -271,6 +271,10 @@
                 updateLocalStorage();
                 document.getElementById("start").value = null;
                 setButton = false;
+            }
+            else{
+                alert("有防呆機制! 請在最終顆數按下D或d再按下這顆按鈕!");
+                return;
             }
         }
         //-----------------------本機儲存類-----------------------\\
@@ -333,6 +337,7 @@
                     break;
 
                 default:
+                    alert("最多五步!");
                     break;
             }
 
