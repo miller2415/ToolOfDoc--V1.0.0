@@ -46,6 +46,13 @@
             color: gray;
         }
 
+        h3.title {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: gray;
+        }
+
         select,
         input[type="number"],
         button {
@@ -134,7 +141,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: scroll;
-            text-align: center;
+            text-align: left;
         }
 
         table {
@@ -150,16 +157,21 @@
             text-align: center;
         }
 
-        th,
+        th {
+            background-color: #2980b9;
+            /* 將標題行背景顏色改為明亮的藍色 */
+            color: #fff;
+            /* 將標題行文字顏色改為白色 */
+            padding: auto;
+            text-align: center;
+            width: 300px;
+
+        }
+
         td {
             padding: 10px;
             border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            text-align: left;
+            text-align: center;
         }
     </style>
 </head>
@@ -197,8 +209,8 @@
         <input type="number" id="start" name="start" min="0"><br>
         <label for="end" title="可以直接enter了">最終顆數:</label>
         <input type="number" id="end" name="end" min="0"><br>
-        <button type="button" class="calculate" onclick="calculate()" title="這顆按鈕很憂鬱請慢慢按">計算</button>
-        <button type="button" class="undo" onclick="undo()" title="從這邊到那邊一共五步">上一步</button>
+        <button type="button" class="calculate" onclick="calculate()" title="計算">計算</button>
+        <button type="button" class="undo" onclick="undo()" title="可以往回五步">上一步</button>
     </form>
     <div id="output" title="限制20行"></div>
     <table id="statsTable">
@@ -216,8 +228,8 @@
         </tbody>
     </table>
     <div class="center-text">
-        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料">網頁重開會有紀錄</h3>
-        <h3 title="">刪除全部資料按這顆按鈕</h3>
+        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料" class="title">網頁重開會有紀錄</h3>
+        <h3 title="" class="title">刪除全部資料按這顆按鈕</h3>
         <button type="button" class="del" onclick="delLocalStorage()" title="為了防止誤觸最終顆數按d或D這顆才會生效">刪除全部</button>
     </div>
 
@@ -261,8 +273,8 @@
             }
         }
         checkLocalStorageExpiration();//執行
-        function delLocalStorage(){//刪除
-            if(setButton){
+        function delLocalStorage() {//刪除
+            if (setButton) {
                 localStorage.removeItem('serverStats');
                 localStorage.removeItem('storageTimestamp');
                 serverStats = {};
@@ -270,9 +282,15 @@
                 updateStatsTable();
                 updateLocalStorage();
                 document.getElementById("start").value = null;
+
+                var outputDiv = document.getElementById("output");
+                var serverConfig = "已清空！"
+                outputDiv.innerHTML = serverConfig;
+                var lines = outputDiv.innerHTML.split("<br>");
+
                 setButton = false;
             }
-            else{
+            else {
                 alert("有防呆機制! 請在最終顆數按下D或d再按下這顆按鈕!");
                 return;
             }
@@ -340,29 +358,39 @@
                     alert("最多五步!");
                     break;
             }
+            var outputDiv = document.getElementById("output");
+            var serverConfig = "已回到上一步！"
+            var currentConfig = outputDiv.innerHTML;
+            outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
+            var lines = outputDiv.innerHTML.split("<br>");
+            if (lines.length > 20) {
+                lines.pop(); // 刪除最後一行
+                outputDiv.innerHTML = lines.join("<br>");
+            }
 
         }
         //-----------------------回上一步類-----------------------\\
 
         //-----------------------表格排序類-----------------------\\
+        /*
         var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
         function sortTableByServerOrder(tableData) {
-            var sortedData = [];
-
-            // 排序
-            for (var i = 0; i < serverOrder.length; i++) {
-                var server = serverOrder[i];
-
-                for (var j = 0; j < tableData.length; j++) {
-                    if (tableData[j].server === server) {
-                        sortedData.push(tableData[j]);
-                        break;
+            var dataArray = [];
+            for (var account in tableData) {
+                for (var server in tableData[account]) {
+                    for (var shape in tableData[account][server]) {
+                        dataArray.push({
+                            account: account,
+                            server: server,
+                            shape: shape,
+                            maxStartCount: tableData[account][server][shape].maxStartCount,
+                            minEndCount: tableData[account][server][shape].minEndCount
+                        });
                     }
                 }
             }
-
             return sortedData;
-        }
+        }*/
         //-----------------------表格排序類-----------------------\\
 
         //-----------------------按鈕控制類-----------------------\\
@@ -430,7 +458,7 @@
 
             //文字記錄
             var outputDiv = document.getElementById("output");
-            var serverConfig = account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price + " 時間: " + formattedTime;
+            var serverConfig = " 時間: " + formattedTime + " " + account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
             var currentConfig = outputDiv.innerHTML;
             outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
             var lines = outputDiv.innerHTML.split("<br>");
@@ -473,8 +501,9 @@
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
 
-            //依照伺服器排序
-            var sortedData = sortTableByServerOrder(serverStats);
+            // 使用已排序的數據
+            //var sortedData = sortTableByServerOrder(serverStats);
+            //console.log(sortTableByServerOrder(serverStats));
 
             for (var account in serverStats) {
                 for (var server in serverStats[account]) {
@@ -495,6 +524,7 @@
             }
         }
 
+
         //切換時輸入起始顆數
         function updateStartCount() {
             var account = document.getElementById("account").value;
@@ -504,6 +534,9 @@
             if (serverStats[account] && serverStats[account][server] && serverStats[account][server][shape]) {
                 var endCount = serverStats[account][server][shape].minEndCount;
                 document.getElementById("start").value = endCount;
+            }
+            else {
+                document.getElementById("start").value = null;
             }
         }
         //-----------------------狀態更新類-----------------------\\
