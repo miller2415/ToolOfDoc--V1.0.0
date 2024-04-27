@@ -158,9 +158,9 @@
         }
 
         th {
-            background-color: #2980b9;
+            /*background-color: #2980b9;*/
             /* 將標題行背景顏色改為明亮的藍色 */
-            color: #fff;
+            /*color: #fff;*/
             /* 將標題行文字顏色改為白色 */
             padding: auto;
             text-align: center;
@@ -212,12 +212,12 @@
         <button type="button" class="calculate" onclick="calculate()" title="計算">計算</button>
         <button type="button" class="undo" onclick="undo()" title="可以往回五步">上一步</button>
     </form>
-    <div id="output" title="限制20行"></div>
+    <div id="output" title="限制200行"></div>
     <table id="statsTable">
         <thead>
             <tr>
-                <th>帳號</th>
                 <th>伺服器</th>
+                <th>帳號</th>
                 <th>方塊類型</th>
                 <th>最初顆數</th>
                 <th>最後顆數</th>
@@ -237,6 +237,7 @@
     <script>
         // 本地資料與表格資料共用空間
         var serverStats = {};
+        //var textData = "";
         var setButton = false;
 
         //-----------------------本機儲存類-----------------------\\
@@ -251,11 +252,20 @@
                 serverStats = JSON.parse(storedStats);
                 updateStatsTable();
             }
+            /*
+            textData = localStorage.getItem('textData');
+            if (textData) {
+                textData = JSON.parse(textData);
+                var outputDiv = document.getElementById("output");
+                outputDiv.innerHTML = textData;
+            }
+            */
         }
 
         //更新
         function updateLocalStorage() {
             localStorage.setItem('serverStats', JSON.stringify(serverStats));
+            //localStorage.setItem('textData', JSON.stringify(textData));
         }
         //檢查localStorage時間戳章
         function checkLocalStorageExpiration() {
@@ -363,7 +373,7 @@
             var currentConfig = outputDiv.innerHTML;
             outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
             var lines = outputDiv.innerHTML.split("<br>");
-            if (lines.length > 20) {
+            if (lines.length > 200) {
                 lines.pop(); // 刪除最後一行
                 outputDiv.innerHTML = lines.join("<br>");
             }
@@ -372,19 +382,18 @@
         //-----------------------回上一步類-----------------------\\
 
         //-----------------------表格排序類-----------------------\\
-        /*
-        var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
+        /*var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
         function sortTableByServerOrder(tableData) {
             var dataArray = [];
-            for (var account in tableData) {
-                for (var server in tableData[account]) {
-                    for (var shape in tableData[account][server]) {
+            for (var server in tableData) {
+                for (var account in tableData[server]) {
+                    for (var shape in tableData[server][account]) {
                         dataArray.push({
-                            account: account,
                             server: server,
+                            account: account,
                             shape: shape,
-                            maxStartCount: tableData[account][server][shape].maxStartCount,
-                            minEndCount: tableData[account][server][shape].minEndCount
+                            maxStartCount: tableData[server][account][shape].maxStartCount,
+                            minEndCount: tableData[server][account][shape].minEndCount
                         });
                     }
                 }
@@ -462,28 +471,27 @@
             var currentConfig = outputDiv.innerHTML;
             outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
             var lines = outputDiv.innerHTML.split("<br>");
-            if (lines.length > 20) {
+            if (lines.length > 200) {
                 lines.pop(); // 刪除最後一行
                 outputDiv.innerHTML = lines.join("<br>");
             }
+            //textData = outputDiv;
 
             // 更新 serverState
-            if (!serverStats[account]) {
-                serverStats[account] = {};
+            if (!serverStats[server]) {
+                serverStats[server] = {};
             }
-            if (!serverStats[account][server]) {
-                serverStats[account][server] = {};
+            if (!serverStats[server][account]) {
+                serverStats[server][account] = {};
             }
-            if (!serverStats[account][server][shape]) {
-                serverStats[account][server][shape] = { maxStartCount: startCount, minEndCount: endCount };
+            if (!serverStats[server][account][shape]) {
+                serverStats[server][account][shape] = { maxStartCount: startCount, minEndCount: endCount };
             } else {
-                serverStats[account][server][shape].maxStartCount = Math.max(serverStats[account][server][shape].maxStartCount, startCount);
-                serverStats[account][server][shape].minEndCount = Math.min(serverStats[account][server][shape].minEndCount, endCount);
+                serverStats[server][account][shape].maxStartCount = Math.max(serverStats[server][account][shape].maxStartCount, startCount);
+                serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
             }
 
-            //設定起始顆數與最終顆數
-            document.getElementById("start").value = endCount;
-            document.getElementById("end").value = "";
+
 
             //更新本地處存
             updateLocalStorage();
@@ -491,6 +499,14 @@
 
             //更新Table
             updateStatsTable();
+
+            //設定起始顆數與最終顆數
+            document.getElementById("start").value = endCount;
+            document.getElementById("end").value = "";
+
+
+
+
         }
         //-----------------------按鈕控制類-----------------------\\
 
@@ -501,24 +517,22 @@
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
 
-            // 使用已排序的數據
-            //var sortedData = sortTableByServerOrder(serverStats);
             //console.log(sortTableByServerOrder(serverStats));
 
-            for (var account in serverStats) {
-                for (var server in serverStats[account]) {
-                    for (var shape in serverStats[account][server]) {
+            for (var server in serverStats) {
+                for (var account in serverStats[server]) {
+                    for (var shape in serverStats[server][account]) {
                         var row = tbody.insertRow();
                         var cell1 = row.insertCell(0);
                         var cell2 = row.insertCell(1);
                         var cell3 = row.insertCell(2);
                         var cell4 = row.insertCell(3);
                         var cell5 = row.insertCell(4);
-                        cell1.innerHTML = account;
-                        cell2.innerHTML = server;
+                        cell1.innerHTML = server;
+                        cell2.innerHTML = account;
                         cell3.innerHTML = shape;
-                        cell4.innerHTML = serverStats[account][server][shape].maxStartCount;
-                        cell5.innerHTML = serverStats[account][server][shape].minEndCount;
+                        cell4.innerHTML = serverStats[server][account][shape].maxStartCount;
+                        cell5.innerHTML = serverStats[server][account][shape].minEndCount;
                     }
                 }
             }
@@ -531,8 +545,8 @@
             var server = document.getElementById("server").value;
             var shape = document.querySelector('input[name="shape"]:checked').value;
 
-            if (serverStats[account] && serverStats[account][server] && serverStats[account][server][shape]) {
-                var endCount = serverStats[account][server][shape].minEndCount;
+            if (serverStats[server] && serverStats[server][account] && serverStats[server][account][shape]) {
+                var endCount = serverStats[server][account][shape].minEndCount;
                 document.getElementById("start").value = endCount;
             }
             else {
