@@ -445,12 +445,12 @@
                 alert("初始顆數必須大於最終顆數");
                 return;
             }
-            if (isNaN(startCount)) {
-                alert("請輸入起始顆數。");
+            if (isNaN(startCount)) { // | startCount < 0
+                alert("請確認起始顆數。");
                 return;
             }
-            if (isNaN(endCount)) {
-                alert("請輸入最終顆數。");
+            if (isNaN(endCount)) { // | endCount < 0
+                alert("請確認最終顆數。");
                 return;
             }
             //計算
