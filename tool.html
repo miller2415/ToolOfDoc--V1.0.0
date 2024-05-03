@@ -477,7 +477,7 @@
 
             //文字記錄
             var outputDiv = document.getElementById("output");
-            var serverConfig = " 時間: " + formattedTime + " " + account + " - " + server + " (" + shape + "): " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
+            var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " : " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
             var currentConfig = outputDiv.innerHTML;
             outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
             var lines = outputDiv.innerHTML.split("<br>");
