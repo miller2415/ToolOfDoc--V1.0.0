@@ -190,7 +190,7 @@
             <option value="帳號5">帳號5</option>
             <option value="帳號6">帳號6</option>
         </select><br>
-        <!-- <input type="text" id="note" name="note" placeholder="帳號註解或角色名稱" title="可有可無"> --> 
+        <!-- <input type="text" id="note" name="note" placeholder="帳號註解或角色名稱" title="可有可無"> -->
         <label for="server" title="請選擇伺服器">伺服器:</label>
         <select id="server" name="server" onchange="updateStartCount()" title="請選擇伺服器">
             <option value="艾麗亞">艾麗亞</option>
@@ -200,7 +200,7 @@
             <option value="愛麗西亞">愛麗西亞</option>
             <option value="殺人鯨">殺人鯨</option>
         </select><br>
-        <b  title="閃炫1:54 結合1:108">方塊類型:</b>
+        <b title="閃炫1:54 結合1:108">方塊類型:</b>
         <div class="shape-options">
             <input type="radio" id="flashy" name="shape" value="閃炫" onchange="updateStartCount()">
             <label for="flashy">閃炫</label>
@@ -239,7 +239,7 @@
     <script>
         // 本地資料與表格資料共用空間
         var serverStats = {};
-        //var textData = "";
+        var textData;
         var setButton = false;
 
         //-----------------------本機儲存類-----------------------\\
@@ -254,20 +254,23 @@
                 serverStats = JSON.parse(storedStats);
                 updateStatsTable();
             }
-            /*
-            textData = localStorage.getItem('textData');
-            if (textData) {
-                textData = JSON.parse(textData);
+
+            var textx = (localStorage.getItem('textData'));
+
+            if (textx) {
                 var outputDiv = document.getElementById("output");
-                outputDiv.innerHTML = textData;
+                //console.log(textx);
+                outputDiv.innerHTML = textx;
             }
-            */
+
         }
 
         //更新
         function updateLocalStorage() {
             localStorage.setItem('serverStats', JSON.stringify(serverStats));
-            //localStorage.setItem('textData', JSON.stringify(textData));
+            var text = (document.getElementById("output"));
+            //console.log((text.innerHTML));
+            localStorage.setItem('textData', (text.innerHTML));
         }
         //檢查localStorage時間戳章
         function checkLocalStorageExpiration() {
@@ -276,6 +279,7 @@
                 var currentTime = new Date().getTime();
                 var sixDaysInMillis = 5 * 24 * 60 * 60 * 1000;//檢查是否過五天
                 if (currentTime - parseInt(storedTime) > sixDaysInMillis) {
+                    localStorage.removeItem('textData');
                     localStorage.removeItem('serverStats');
                     localStorage.removeItem('storageTimestamp');
                     localStorage.setItem('storageTimestamp', new Date().getTime().toString());
@@ -291,14 +295,15 @@
                 localStorage.removeItem('storageTimestamp');
                 serverStats = {};
                 localStorage.setItem('storageTimestamp', new Date().getTime().toString());
-                updateStatsTable();
-                updateLocalStorage();
+
                 document.getElementById("start").value = null;
 
                 var outputDiv = document.getElementById("output");
                 var serverConfig = "已清空！"
                 outputDiv.innerHTML = serverConfig;
                 var lines = outputDiv.innerHTML.split("<br>");
+                updateStatsTable();
+                updateLocalStorage();
 
                 setButton = false;
             }
@@ -375,10 +380,10 @@
                     alert("最多五步!");
                     break;
             }
-            
+
 
         }
-        function setUndoOutputText(){
+        function setUndoOutputText() {
             var outputDiv = document.getElementById("output");
             var serverConfig = "已回到上一步！"
             var currentConfig = outputDiv.innerHTML;
@@ -388,6 +393,7 @@
                 lines.pop(); // 刪除最後一行
                 outputDiv.innerHTML = lines.join("<br>");
             }
+            localStorage.setItem('textData', outputDiv.innerHTML);
         }
         //-----------------------回上一步類-----------------------\\
 
@@ -463,6 +469,7 @@
                 alert("請確認最終顆數。");
                 return;
             }
+            
             //計算
             var price;
             if (shape === "閃炫") {
@@ -485,7 +492,6 @@
                 lines.pop(); // 刪除最後一行
                 outputDiv.innerHTML = lines.join("<br>");
             }
-            //textData = outputDiv;
 
             // 更新 serverState
             if (!serverStats[server]) {
@@ -501,11 +507,8 @@
                 serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
             }
 
-
-
             //更新本地處存
             updateLocalStorage();
-
 
             //更新Table
             updateStatsTable();
@@ -513,10 +516,6 @@
             //設定起始顆數與最終顆數
             document.getElementById("start").value = endCount;
             document.getElementById("end").value = "";
-
-
-
-
         }
         //-----------------------按鈕控制類-----------------------\\
 
