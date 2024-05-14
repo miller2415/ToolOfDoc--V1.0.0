@@ -11,6 +11,7 @@
             background-color: #f5f5f5;
             margin: 0;
             padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         h2 {
@@ -150,23 +151,28 @@
         }
 
         table {
-            max-width: 800px; /* 增加表格最大寬度 */
+            max-width: 800px;
+            /* 增加表格最大寬度 */
             margin: 20px auto;
             border-collapse: collapse;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden; /* 將溢出部分隱藏，使表格外觀更加整潔 */
+            /* overflow: hidden; */
+            /* 將溢出部分隱藏，使表格外觀更加整潔 */
         }
 
-        th, td {
-            padding: 12px 15px; /* 調整單元格內邊距 */
+        th,
+        td {
+            padding: 12px 15px;
+            /* 調整單元格內邊距 */
             border-bottom: 1px solid #ddd;
             text-align: center;
         }
 
         th {
-            background-color: #0077cc; /* 將標題行背景顏色改為較柔和的藍色 */
+            background-color: #0077cc;
+            /* 將標題行背景顏色改為較柔和的藍色 */
             color: #fff;
             font-weight: bold;
             text-transform: uppercase;
@@ -174,72 +180,144 @@
 
 
         tbody tr:nth-child(even) {
-            background-color: #f2f2f2; /* 隔行添加淺灰色背景，增加易讀性 */
+            background-color: #f2f2f2;
+            /* 隔行添加淺灰色背景，增加易讀性 */
         }
 
         tbody tr:hover {
-            background-color: #e5e5e5; /* 滑鼠懸停時添加淺灰色背景，增強交互效果 */
+            background-color: #e5e5e5;
+            /* 滑鼠懸停時添加淺灰色背景，增強交互效果 */
+        }
+
+        .left-side {
+            float: left;
+            width: 50%;
+            box-sizing: border-box;
+            /* 包含內邊距和邊框在內的寬度 */
+        }
+
+        .right-side {
+            float: right;
+            width: 50%;
+            box-sizing: border-box;
+            min-width: 0;
+            /* 使得左右內容能夠被壓縮到最小寬度 */
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .left-side {
+            flex: 1;
+        }
+
+        .right-side {
+            flex: 1;
+        }
+
+
+        header {
+            /* background-color: #333; */
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        footer {
+             /* background-color: #333; */
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+
+        /* 在螢幕寬度小於某個閾值時，進行排列變更 */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-    <h2>閃炫記錄工具</h2>
-    <form id="configForm">
-        <!---<p title="像這樣" class="title">滑鼠停留在文字上時會顯示功能</p>--->
-        <label for="account" title="帳號切換">帳號:</label>
-        <select id="account" name="account" onchange="updateStartCount()" title="帳號切換">
-            <option value="帳號1">帳號1</option>
-            <option value="帳號2">帳號2</option>
-            <option value="帳號3">帳號3</option>
-            <option value="帳號4">帳號4</option>
-            <option value="帳號5">帳號5</option>
-            <option value="帳號6">帳號6</option>
-        </select><br>
-        <input type="text" id="note" name="note" placeholder="筆記空間" title="無特殊功能單純筆記">
-        <label for="server" title="請選擇伺服器">伺服器:</label>
-        <select id="server" name="server" onchange="updateStartCount()" title="請選擇伺服器">
-            <option value="艾麗亞">艾麗亞</option>
-            <option value="普力特">普力特</option>
-            <option value="琉德">琉德</option>
-            <option value="優伊娜">優伊娜</option>
-            <option value="愛麗西亞">愛麗西亞</option>
-            <option value="殺人鯨">殺人鯨</option>
-        </select><br>
-        <b title="閃炫1:60 結合1:108">方塊類型:</b>
-        <div class="shape-options">
-            <input type="radio" id="flashy" name="shape" value="閃炫" onchange="updateStartCount()">
-            <label for="flashy">閃炫</label>
-            <input type="radio" id="combined" name="shape" value="結合" onchange="updateStartCount()">
-            <label for="combined">結合</label>
-        </div>
-        <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始顆數:</label>
-        <input type="number" id="start" name="start" min="0"><br>
-        <label for="end" title="可以直接enter了">最終顆數:</label>
-        <input type="number" id="end" name="end" min="0"><br>
-        <button type="button" class="calculate" onclick="calculate()" title="計算">計算</button>
-        <button type="button" class="undo" onclick="undo()" title="可以往回五步">上一步</button>
-    </form>
-    <div id="output" title="限制200行"></div>
-    <table id="statsTable">
-        <thead>
-            <tr>
-                <th>伺服器</th>
-                <th>帳號</th>
-                <th>方塊類型</th>
-                <th>最初顆數</th>
-                <th>最後顆數</th>
-            </tr>
-        </thead>
-        <tbody>
+    <header>
+        <h2>閃炫記錄工具</h2>
+    </header>
 
-        </tbody>
-    </table>
-    <div class="center-text">
-        <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料" class="title">網頁重開會有紀錄</h3>
-        <h3 title="" class="title">刪除全部資料按這顆按鈕</h3>
-        <button type="button" class="del" onclick="delLocalStorage()" title="為了防止誤觸最終顆數按d或D這顆才會生效">刪除全部</button>
+    <div class="container">
+        <div class="left-side">
+            <form id="configForm">
+                <!---<p title="像這樣" class="title">滑鼠停留在文字上時會顯示功能</p>--->
+                <label for="account" title="帳號切換">帳號:</label>
+                <select id="account" name="account" onchange="updateStartCount()" title="帳號切換">
+                    <option value="帳號1">帳號1</option>
+                    <option value="帳號2">帳號2</option>
+                    <option value="帳號3">帳號3</option>
+                    <option value="帳號4">帳號4</option>
+                    <option value="帳號5">帳號5</option>
+                    <option value="帳號6">帳號6</option>
+                </select><br>
+                <input type="text" id="note" name="note" placeholder="筆記空間" title="無特殊功能單純筆記">
+                <label for="server" title="請選擇伺服器">伺服器:</label>
+                <select id="server" name="server" onchange="updateStartCount()" title="請選擇伺服器">
+                    <option value="艾麗亞">艾麗亞</option>
+                    <option value="普力特">普力特</option>
+                    <option value="琉德">琉德</option>
+                    <option value="優伊娜">優伊娜</option>
+                    <option value="愛麗西亞">愛麗西亞</option>
+                    <option value="殺人鯨">殺人鯨</option>
+                </select><br>
+                <b title="閃炫1:60 結合1:108">方塊類型:</b>
+                <div class="shape-options">
+                    <input type="radio" id="flashy" name="shape" value="閃炫" onchange="updateStartCount()">
+                    <label for="flashy">閃炫</label>
+                    <input type="radio" id="combined" name="shape" value="結合" onchange="updateStartCount()">
+                    <label for="combined">結合</label>
+                </div>
+                <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始顆數:</label>
+                <input type="number" id="start" name="start" min="0"><br>
+                <label for="end" title="可以直接enter了">最終顆數:</label>
+                <input type="number" id="end" name="end" min="0"><br>
+                <button type="button" class="calculate" onclick="calculate()" title="計算">計算</button>
+                <button type="button" class="undo" onclick="undo()" title="可以往回五步">上一步</button>
+            </form>
+        </div>
+
+        <div class="right-side">
+            <form id="configForm">
+                <div id="output" title="限制200行"></div>
+                <table id="statsTable">
+                    <thead>
+                        <tr>
+                            <th>伺服器</th>
+                            <th>帳號</th>
+                            <th>方塊類型</th>
+                            <th>最初顆數</th>
+                            <th>最後顆數</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </form>
+        </div>
     </div>
+    <footer>
+        <div class="center-text">
+            <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料" class="title">網頁重開會有紀錄</h3>
+            <h3 title="" class="title">刪除全部資料按這顆按鈕</h3>
+            <button type="button" class="del" onclick="delLocalStorage()" title="為了防止誤觸最終顆數按d或D這顆才會生效">刪除全部</button>
+        </div>
+    </footer>
 
 
     <script>
@@ -475,7 +553,7 @@
                 alert("請確認最終顆數。");
                 return;
             }
-            
+
             //計算
             var price;
             if (shape === "閃炫") {
