@@ -664,7 +664,6 @@
         function updateStartCount() {
             var account = document.getElementById("account").value;
             var server = document.getElementById("server").value;
-            if (document.querySelector('input[name="shape"]:checked').value){return;}
             var shape = document.querySelector('input[name="shape"]:checked').value;
 
             if (serverStats[server] && serverStats[server][account] && serverStats[server][account][shape]) {
