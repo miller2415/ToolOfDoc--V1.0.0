@@ -360,13 +360,15 @@
             //console.log((text.innerHTML));
             localStorage.setItem('textData', (text.innerHTML));
         }
-        //檢查localStorage時間戳章
+        //檢查localStorage時間戳章超過五天會自動刪除
         function checkLocalStorageExpiration() {
-            var storedTime = localStorage.getItem('storageTimestamp');
+            var storedTime = localStorage.getItem('storageTimestamp');//檢查時要改小
             if (storedTime) {
                 var currentTime = new Date().getTime();
                 var sixDaysInMillis = 5 * 24 * 60 * 60 * 1000;//檢查是否過五天
-                if (currentTime - parseInt(storedTime) > sixDaysInMillis) {
+
+                if (currentTime - storedTime > sixDaysInMillis) {
+                    console.log(currentTime - storedTime);
                     localStorage.removeItem('textData');
                     localStorage.removeItem('serverStats');
                     localStorage.removeItem('storageTimestamp');
@@ -520,14 +522,7 @@
             }
         });
 
-        //按下計算所需要處理的東西
-        function calculate() {
-            //讀取值
-            var account = document.getElementById("account").value;
-            var server = document.getElementById("server").value;
-            var shape = document.querySelector('input[name="shape"]:checked').value;
-            var startCount = parseInt(document.getElementById("start").value);
-            var endCount = parseInt(document.getElementById("end").value);
+        function undoSave(){
             //上一步資料存取
             if (originalServerStats4) {
                 originalServerStats5 = JSON.parse(JSON.stringify(originalServerStats4));
@@ -543,7 +538,61 @@
             }
             originalServerStats1 = JSON.parse(JSON.stringify(serverStats));
             UndoCount = 1;
+        }
 
+        //價格計算
+        function Price(shape,startCount,endCount){
+            if (shape === "閃炫") {
+                price = (startCount - endCount) * 60;
+            } else if (shape === "結合") {
+                price = (startCount - endCount) * 108;
+            }
+            return price;
+        }
+
+        function outputSave(server,account,shape,startCount,endCount){
+            //時間
+            var currentTime = new Date();
+            var formattedTime = currentTime.toLocaleString('zh-TW', { hour: 'numeric', minute: 'numeric', hour12: false });
+
+            //文字記錄
+            var outputDiv = document.getElementById("output");
+            var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " : " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
+            var currentConfig = outputDiv.innerHTML;
+            outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
+            var lines = outputDiv.innerHTML.split("<br>");
+            if (lines.length > 200) {
+                lines.pop(); // 刪除最後一行
+                outputDiv.innerHTML = lines.join("<br>");
+            }
+        }
+
+        function serverStateSave(server,account,shape,startCount,endCount){
+            if (!serverStats[server]) {
+                serverStats[server] = {};
+            }
+            if (!serverStats[server][account]) {
+                serverStats[server][account] = {};
+            }
+            if (!serverStats[server][account][shape]) {
+                serverStats[server][account][shape] = { maxStartCount: startCount, minEndCount: endCount };
+            } else {
+                serverStats[server][account][shape].maxStartCount = Math.max(serverStats[server][account][shape].maxStartCount, startCount);
+                serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
+            }
+        }
+
+        //按下計算所需要處理的東西
+        function calculate() {
+            //讀取值
+            var account = document.getElementById("account").value;
+            var server = document.getElementById("server").value;
+            var shape = document.querySelector('input[name="shape"]:checked').value;
+            var startCount = parseInt(document.getElementById("start").value);
+            var endCount = parseInt(document.getElementById("end").value);
+            //儲存上一步
+            undoSave();
+            
             //保護
             if (startCount <= endCount) {
                 alert("初始顆數必須大於最終顆數");
@@ -559,41 +608,13 @@
             }
 
             //計算
-            var price;
-            if (shape === "閃炫") {
-                price = (startCount - endCount) * 60;
-            } else if (shape === "結合") {
-                price = (startCount - endCount) * 108;
-            }
+            var price = Price(shape,startCount,endCount);
 
-            //時間
-            var currentTime = new Date();
-            var formattedTime = currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-
-            //文字記錄
-            var outputDiv = document.getElementById("output");
-            var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " : " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
-            var currentConfig = outputDiv.innerHTML;
-            outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
-            var lines = outputDiv.innerHTML.split("<br>");
-            if (lines.length > 200) {
-                lines.pop(); // 刪除最後一行
-                outputDiv.innerHTML = lines.join("<br>");
-            }
+            //outputConsole
+            outputSave(server,account,shape,startCount,endCount);
 
             // 更新 serverState
-            if (!serverStats[server]) {
-                serverStats[server] = {};
-            }
-            if (!serverStats[server][account]) {
-                serverStats[server][account] = {};
-            }
-            if (!serverStats[server][account][shape]) {
-                serverStats[server][account][shape] = { maxStartCount: startCount, minEndCount: endCount };
-            } else {
-                serverStats[server][account][shape].maxStartCount = Math.max(serverStats[server][account][shape].maxStartCount, startCount);
-                serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
-            }
+            serverStateSave(server,account,shape,startCount,endCount);
 
             //更新本地處存
             updateLocalStorage();
