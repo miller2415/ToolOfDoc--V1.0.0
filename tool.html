@@ -144,7 +144,8 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: scroll;
             text-align: left;
-            border: 2px solid #007bff;/* 添加邊框以增加可見性 */
+            border: 2px solid #007bff;
+            /* 添加邊框以增加可見性 */
         }
 
         .center-text {
@@ -159,7 +160,8 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border: 2px solid #007bff;/* 添加邊框以增加可見性 */
+            border: 2px solid #007bff;
+            /* 添加邊框以增加可見性 */
             /* overflow: hidden; */
             /* 將溢出部分隱藏，使表格外觀更加整潔 */
         }
@@ -227,7 +229,7 @@
         }
 
         footer {
-             /* background-color: #333; */
+            /* background-color: #333; */
             color: #fff;
             padding: 10px 20px;
             text-align: center;
@@ -523,7 +525,7 @@
             }
         });
 
-        function undoSave(){
+        function undoSave() {
             //上一步資料存取
             if (originalServerStats4) {
                 originalServerStats5 = JSON.parse(JSON.stringify(originalServerStats4));
@@ -542,7 +544,7 @@
         }
 
         //價格計算
-        function Price(shape,startCount,endCount){
+        function Price(shape, startCount, endCount) {
             if (shape === "閃炫") {
                 price = (startCount - endCount) * 60;
             } else if (shape === "結合") {
@@ -551,7 +553,7 @@
             return price;
         }
 
-        function outputSave(server,account,shape,startCount,endCount){
+        function outputSave(server, account, shape, startCount, endCount) {
             //時間
             var currentTime = new Date();
             var formattedTime = currentTime.toLocaleString('zh-TW', { hour: 'numeric', minute: 'numeric', hour12: false });
@@ -568,7 +570,7 @@
             }
         }
 
-        function serverStateSave(server,account,shape,startCount,endCount){
+        function serverStateSave(server, account, shape, startCount, endCount) {
             if (!serverStats[server]) {
                 serverStats[server] = {};
             }
@@ -593,7 +595,7 @@
             var endCount = parseInt(document.getElementById("end").value);
             //儲存上一步
             undoSave();
-            
+
             //保護
             if (startCount <= endCount) {
                 alert("初始顆數必須大於最終顆數");
@@ -609,13 +611,13 @@
             }
 
             //計算
-            var price = Price(shape,startCount,endCount);
+            var price = Price(shape, startCount, endCount);
 
             //outputConsole
-            outputSave(server,account,shape,startCount,endCount);
+            outputSave(server, account, shape, startCount, endCount);
 
             // 更新 serverState
-            serverStateSave(server,account,shape,startCount,endCount);
+            serverStateSave(server, account, shape, startCount, endCount);
 
             //更新本地處存
             updateLocalStorage();
