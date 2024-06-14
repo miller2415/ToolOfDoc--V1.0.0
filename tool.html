@@ -368,7 +368,7 @@
                 var sixDaysInMillis = 5 * 24 * 60 * 60 * 1000;//檢查是否過五天
 
                 if (currentTime - storedTime > sixDaysInMillis) {
-                    console.log(currentTime - storedTime);
+                    //console.log(currentTime - storedTime);
                     localStorage.removeItem('textData');
                     localStorage.removeItem('serverStats');
                     localStorage.removeItem('storageTimestamp');
