@@ -284,10 +284,13 @@
                     <label for="flashy">閃炫</label>
                     <input type="radio" id="combined" name="shape" value="結合" onchange="updateStartCount()">
                     <label for="combined">結合</label>
+                    <input type="radio" id="legend" name="shape" value="傳說卷" onchange="updateStartCount()">
+                    <label for="legend">傳說卷</label>
                 </div>
-                <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始顆數:</label>
+                <label for="" title="">#傳說卷只要在最終數量那輸入幾張就好 他會累計</label>
+                <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始數量:</label>
                 <input type="number" id="start" name="start" min="0"><br>
-                <label for="end" title="可以直接enter了">最終顆數:</label>
+                <label for="end" title="可以直接enter了">最終數量:</label>
                 <input type="number" id="end" name="end" min="0"><br>
                 <button type="button" class="calculate" onclick="calculate()" title="計算">計算</button>
                 <button type="button" class="undo" onclick="undo()" title="可以往回五步">上一步</button>
@@ -305,8 +308,8 @@
                             <th>伺服器</th>
                             <th>帳號</th>
                             <th>方塊類型</th>
-                            <th>最初顆數</th>
-                            <th>最後顆數</th>
+                            <th>起始數量</th>
+                            <th>最終數量</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -321,7 +324,7 @@
         <div class="center-text">
             <h3 title="localStorage本機儲存 五天後開啟網頁會自動刪除舊的資料" class="title">網頁重開會有紀錄</h3>
             <h3 title="" class="title">刪除全部資料按這顆按鈕</h3>
-            <button type="button" class="del" onclick="delLocalStorage()" title="為了防止誤觸最終顆數按d或D這顆才會生效">刪除全部</button>
+            <button type="button" class="del" onclick="delLocalStorage()" title="為了防止誤觸最終數量按d或D這顆才會生效">刪除全部</button>
         </div>
     </footer>
 
@@ -401,7 +404,7 @@
                 setButton = false;
             }
             else {
-                alert("有防呆機制! 請在最終顆數按下D或d再按下這顆按鈕!");
+                alert("有防呆機制! 請在最終數量按下D或d再按下這顆按鈕!");
                 return;
             }
         }
@@ -512,7 +515,7 @@
         //-----------------------表格排序類-----------------------\\
 
         //-----------------------按鈕控制類-----------------------\\
-        //監聽鍵盤在最終顆數按下ENTER時會啟動計算按鈕
+        //監聽鍵盤在最終數量按下ENTER時會啟動計算按鈕
         var endCountInput = document.getElementById("end");
         endCountInput.addEventListener("keyup", function (event) {
             // 檢查是否按下enter
@@ -546,10 +549,13 @@
         //價格計算
         function Price(shape, startCount, endCount) {
             if (shape === "閃炫") {
-                price = (startCount - endCount) * 60;
+                price = (startCount - endCount) * 50;
             } else if (shape === "結合") {
                 price = (startCount - endCount) * 108;
+            } else if (shape === "傳說卷") {
+                price = (endCount) * 200;
             }
+
             return price;
         }
 
@@ -560,10 +566,17 @@
 
             //文字記錄
             var outputDiv = document.getElementById("output");
-            var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " : " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
+            if (shape === "傳說卷") {
+                var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " → " + endCount + " 價格: " + price;
+            } else {
+
+                var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " : " + startCount + " → " + endCount + " 顆數: " + (startCount - endCount) + " 價格: " + price;
+            }
             var currentConfig = outputDiv.innerHTML;
             outputDiv.innerHTML = serverConfig + "<br>" + currentConfig;
             var lines = outputDiv.innerHTML.split("<br>");
+
+
             if (lines.length > 200) {
                 lines.pop(); // 刪除最後一行
                 outputDiv.innerHTML = lines.join("<br>");
@@ -578,10 +591,23 @@
                 serverStats[server][account] = {};
             }
             if (!serverStats[server][account][shape]) {
-                serverStats[server][account][shape] = { maxStartCount: startCount, minEndCount: endCount };
+                if (shape === "傳說卷") {
+                    console.log("1")
+                    serverStats[server][account][shape] = { maxStartCount: 0, minEndCount: endCount };
+                }else {
+                    serverStats[server][account][shape] = { maxStartCount: startCount, minEndCount: endCount };
+                }
+                
             } else {
-                serverStats[server][account][shape].maxStartCount = Math.max(serverStats[server][account][shape].maxStartCount, startCount);
-                serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
+                if (shape === "傳說卷") {
+                    console.log("2")
+                    serverStats[server][account][shape].maxStartCount = 0;
+                    serverStats[server][account][shape].minEndCount += endCount;
+                }else {
+                    serverStats[server][account][shape].maxStartCount = Math.max(serverStats[server][account][shape].maxStartCount, startCount);
+                    serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
+                }
+                
             }
         }
 
@@ -597,16 +623,18 @@
             undoSave();
 
             //保護
-            if (startCount <= endCount) {
-                alert("初始顆數必須大於最終顆數");
-                return;
-            }
-            if (isNaN(startCount)) { // | startCount < 0
-                alert("請確認起始顆數。");
-                return;
+            if (shape === "閃炫" | shape === "結合") {
+                if (startCount <= endCount) {
+                    alert("初始顆數必須大於最終數量");
+                    return;
+                }
+                if (isNaN(startCount)) { // | startCount < 0
+                    alert("請確認起始數量。");
+                    return;
+                }
             }
             if (isNaN(endCount)) { // | endCount < 0
-                alert("請確認最終顆數。");
+                alert("請確認最終數量。");
                 return;
             }
 
@@ -625,7 +653,7 @@
             //更新Table
             updateStatsTable();
 
-            //設定起始顆數與最終顆數
+            //設定起始數量與最終數量
             document.getElementById("start").value = endCount;
             document.getElementById("end").value = "";
         }
@@ -660,7 +688,7 @@
         }
 
 
-        //切換時輸入起始顆數
+        //切換時輸入起始數量
         function updateStartCount() {
             var account = document.getElementById("account").value;
             var server = document.getElementById("server").value;
