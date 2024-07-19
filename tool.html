@@ -286,8 +286,10 @@
                     <label for="combined">結合</label>
                     <input type="radio" id="legend" name="shape" value="傳說卷" onchange="updateStartCount()">
                     <label for="legend">傳說卷</label>
+                    <input type="radio" id="scissors" name="shape" value="剪刀" onchange="updateStartCount()">
+                    <label for="scissors">剪刀</label>
                 </div>
-                <label for="" title="">#傳說卷只要在最終數量那輸入幾張就好 他會累計</label>
+                <h for="" title="">#傳說卷跟剪刀只要在最終數量那輸入幾張就好 他會累計</h>
                 <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始數量:</label>
                 <input type="number" id="start" name="start" min="0"><br>
                 <label for="end" title="可以直接enter了">最終數量:</label>
@@ -494,24 +496,41 @@
         //-----------------------回上一步類-----------------------\\
 
         //-----------------------表格排序類-----------------------\\
-        /*var serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
+
+        // 按固定順序排序對象的函數
+        function sortObjectByKeys(obj, order) {
+            const sortedObj = {};
+            order.forEach(key => {
+                if (obj[key] !== undefined) {
+                    sortedObj[key] = obj[key];
+                }
+            });
+            // 添加未列出的建
+            Object.keys(obj).forEach(key => {
+                if (!sortedObj[key]) {
+                    sortedObj[key] = obj[key];
+                }
+            });
+            return sortedObj;
+        }
+        //排序
         function sortTableByServerOrder(tableData) {
-            var dataArray = [];
-            for (var server in tableData) {
-                for (var account in tableData[server]) {
-                    for (var shape in tableData[server][account]) {
-                        dataArray.push({
-                            server: server,
-                            account: account,
-                            shape: shape,
-                            maxStartCount: tableData[server][account][shape].maxStartCount,
-                            minEndCount: tableData[server][account][shape].minEndCount
-                        });
-                    }
+            //排序順序
+            const serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
+            const shapeOrder = ["閃炫", "結合", "傳說卷", "剪刀"];
+
+        
+
+            let sortedServerStats = sortObjectByKeys(serverStats, serverOrder);
+
+            for (let server in sortedServerStats) {
+                for (let account in sortedServerStats[server]) {
+                    sortedServerStats[server][account] = sortObjectByKeys(sortedServerStats[server][account], shapeOrder);
                 }
             }
-            return sortedData;
-        }*/
+            return sortedServerStats;
+
+        }
         //-----------------------表格排序類-----------------------\\
 
         //-----------------------按鈕控制類-----------------------\\
@@ -554,6 +573,8 @@
                 price = (startCount - endCount) * 108;
             } else if (shape === "傳說卷") {
                 price = (endCount) * 200;
+            } else if (shape === "剪刀") {
+                price = (endCount) * 150;
             }
 
             return price;
@@ -566,7 +587,7 @@
 
             //文字記錄
             var outputDiv = document.getElementById("output");
-            if (shape === "傳說卷") {
+            if (shape === "傳說卷" || shape === "剪刀") {
                 var serverConfig = " 時間: " + formattedTime + " " + server + " - " + account + " - " + shape + " → " + endCount + " 價格: " + price;
             } else {
 
@@ -591,23 +612,23 @@
                 serverStats[server][account] = {};
             }
             if (!serverStats[server][account][shape]) {
-                if (shape === "傳說卷") {
-                    console.log("1")
+                if (shape === "傳說卷" || shape === "剪刀") {
+                    //console.log("1")
                     serverStats[server][account][shape] = { maxStartCount: 0, minEndCount: endCount };
-                }else {
+                } else {
                     serverStats[server][account][shape] = { maxStartCount: startCount, minEndCount: endCount };
                 }
-                
+
             } else {
-                if (shape === "傳說卷") {
-                    console.log("2")
+                if (shape === "傳說卷" || shape === "剪刀") {
+                    //console.log("2")
                     serverStats[server][account][shape].maxStartCount = 0;
                     serverStats[server][account][shape].minEndCount += endCount;
-                }else {
+                } else {
                     serverStats[server][account][shape].maxStartCount = Math.max(serverStats[server][account][shape].maxStartCount, startCount);
                     serverStats[server][account][shape].minEndCount = Math.min(serverStats[server][account][shape].minEndCount, endCount);
                 }
-                
+
             }
         }
 
@@ -654,7 +675,12 @@
             updateStatsTable();
 
             //設定起始數量與最終數量
-            document.getElementById("start").value = endCount;
+            if (shape === "閃炫" || shape === "結合") {
+                document.getElementById("start").value = endCount;
+            } else {
+                document.getElementById("start").value = "";
+            }
+
             document.getElementById("end").value = "";
         }
         //-----------------------按鈕控制類-----------------------\\
@@ -666,7 +692,7 @@
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
 
-            //console.log(sortTableByServerOrder(serverStats));
+            serverStats = sortTableByServerOrder(serverStats);
 
             for (var server in serverStats) {
                 for (var account in serverStats[server]) {
