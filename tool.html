@@ -235,6 +235,55 @@
             text-align: center;
         }
 
+        /* 切換按鈕容器 */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 44px;
+        }
+
+        /* 隱藏原生的checkbox */
+        .toggle-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* 標籤樣式 */
+        .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            cursor: pointer;
+            border-radius: 34px;
+            transition: background-color 0.3s;
+        }
+
+        /* 切換按鈕的滑塊 */
+        .toggle-label:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        /* 當checkbox被選中時的樣式 */
+        .toggle-input:checked + .toggle-label {
+            background-color: #4caf50;
+        }
+
+        .toggle-input:checked + .toggle-label:before {
+            transform: translateX(26px);
+        }
+
 
         /* 在螢幕寬度小於某個閾值時，進行排列變更 */
         @media screen and (max-width: 1100px) {
@@ -318,6 +367,13 @@
 
                     </tbody>
                 </table>
+                <div>
+                    <h for="" title="">排序啟動</h>
+                    <div class="toggle-switch">
+                    <input type="checkbox" id="toggle" class="toggle-input">
+                    <label for="toggle" class="toggle-label"></label>
+                    </div>
+                </div>
 
             </form>
         </div>
@@ -496,6 +552,21 @@
         //-----------------------回上一步類-----------------------\\
 
         //-----------------------表格排序類-----------------------\\
+        var toggleBotton = false;
+        document.getElementById('toggle').addEventListener('change', function() {
+            if (this.checked) {
+                //console.log('Toggle is ON');
+                toggleBotton = true;
+                updateStatsTable();
+                // 這裡可以添加其他操作，例如設定某個值或觸發某個事件
+            } else {
+                //console.log('Toggle is OFF');
+                toggleBotton = false;
+                updateStatsTable();
+                // 這裡可以添加其他操作，例如設定某個值或觸發某個事件
+            }
+        });
+
 
         // 按固定順序排序對象的函數
         function sortObjectByKeys(obj, order) {
@@ -692,11 +763,15 @@
             var tbody = table.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
 
-            serverStats = sortTableByServerOrder(serverStats);
+            var tableStats = serverStats;
+            if (toggleBotton){
+                tableStats = sortTableByServerOrder(tableStats);
+            }
+            
 
-            for (var server in serverStats) {
-                for (var account in serverStats[server]) {
-                    for (var shape in serverStats[server][account]) {
+            for (var server in tableStats) {
+                for (var account in tableStats[server]) {
+                    for (var shape in tableStats[server][account]) {
                         var row = tbody.insertRow();
                         var cell1 = row.insertCell(0);
                         var cell2 = row.insertCell(1);
@@ -706,8 +781,8 @@
                         cell1.innerHTML = server;
                         cell2.innerHTML = account;
                         cell3.innerHTML = shape;
-                        cell4.innerHTML = serverStats[server][account][shape].maxStartCount;
-                        cell5.innerHTML = serverStats[server][account][shape].minEndCount;
+                        cell4.innerHTML = tableStats[server][account][shape].maxStartCount;
+                        cell5.innerHTML = tableStats[server][account][shape].minEndCount;
                     }
                 }
             }
