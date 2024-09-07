@@ -327,7 +327,7 @@
                     <option value="愛麗西亞">愛麗西亞</option>
                     <option value="殺人鯨">殺人鯨</option>
                 </select><br>
-                <b title="閃炫1:60 結合1:108">方塊類型:</b>
+                <b title="閃炫1:50 結合1:105">方塊類型:</b>
                 <div class="shape-options">
                     <input type="radio" id="flashy" name="shape" value="閃炫" onchange="updateStartCount()">
                     <label for="flashy">閃炫</label>
@@ -338,7 +338,7 @@
                     <input type="radio" id="scissors" name="shape" value="剪刀" onchange="updateStartCount()">
                     <label for="scissors">剪刀</label>
                 </div>
-                <h for="" title="">#傳說卷跟剪刀只要在最終數量那輸入幾張就好 他會累計</h>
+                <h for="" title="">#可以只儲存起始數量</h>
                 <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始數量:</label>
                 <input type="number" id="start" name="start" min="0"><br>
                 <label for="end" title="可以直接enter了">最終數量:</label>
@@ -592,7 +592,7 @@
 
         
 
-            let sortedServerStats = sortObjectByKeys(serverStats, serverOrder);
+            let sortedServerStats = sortObjectByKeys(tableData, serverOrder);
 
             for (let server in sortedServerStats) {
                 for (let account in sortedServerStats[server]) {
@@ -726,8 +726,9 @@
                 }
             }
             if (isNaN(endCount)) { // | endCount < 0
-                alert("請確認最終數量。");
-                return;
+                //alert("請確認最終數量。");
+                //return;
+                endCount = startCount;
             }
 
             //計算
