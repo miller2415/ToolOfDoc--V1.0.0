@@ -5,13 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>閃炫記錄工具</title>
+     <!-- 引入Google Fonts中的Creepster字體 -->
+     <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #BBB;
+         body {
+            font-family: 'Arial', 'Creepster', sans-serif;
+            background-color: #2c2c2c; /* 深色背景 */
             margin: 0;
             padding: 0;
-            font-family: Arial, Helvetica, sans-serif;
+            color: #FFFFFF; /* 白色文字 */
+            /*background-image: url(''); /* 萬聖節背景圖 */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #FF7518;
+            padding: 20px;
+            text-align: center;
+            font-family: 'Creepster', cursive;
+            position: relative;
+        }
+        
+        header h2 {
+            margin: 0;
+            font-size: 36px;
+            text-shadow: 2px 2px #FF7518;
         }
 
         h2 {
@@ -19,40 +40,48 @@
             color: #333;
         }
 
+        /* 表單樣式 */
         form {
             max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
+            margin: 20px auto;
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(255, 117, 24, 0.5);
         }
 
         label {
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
+            color: #FF7518;
         }
 
         p {
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
+            color: #FF7518;
         }
 
         p.title {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: gray;
+            color: #FFA500;
         }
 
         h3.title {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: gray;
+            color: #FFA500;
+            text-align: center;
         }
+        /* 方塊類型 (b 標籤) */
+        b {
+        color: #FF7518; /* 橘色字體 */
+        }
+
+        /* #提示字 (h 標籤) */
+        h {
+        color: #ffa500; /* 橘色字體 */
+        }
+
 
         select,
         input[type="number"],
@@ -61,10 +90,12 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #FF7518;
             border-radius: 5px;
             box-sizing: border-box;
             font-size: 16px;
+            background-color: #3c3c3c;
+            color: #FFFFFF;
         }
 
         .shape-options {
@@ -90,23 +121,25 @@
         }
 
         .shape-options label:hover {
-            background-color: #f2f2f2;
+            background-color: #b22735;
         }
 
         .shape-options input[type="radio"]:checked+label {
-            background-color: #007bff;
+            background-color: #FF7518;
             color: #fff;
         }
 
+        /* 按鈕樣式 */
         button.calculate {
-            background-color: #007bff;
-            color: #fff;
+            background-color: #FF7518;
+            color: #FFFFFF;
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button.calculate:hover {
-            background-color: #0056b3;
+            background-color: #e06b18;
         }
 
         button.undo {
@@ -123,76 +156,154 @@
 
         button.del {
             width: 60px;
-            background-color: #b22735;
-            color: #fff;
+            background-color: #800080;
+            color: #FFFFFF;
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button.del:hover {
-            background-color: #a21d2a;
-            /* 深红色 */
+            background-color: #660066;
         }
+
+        /* 加載中按鈕樣式 */
+        button.loading {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        button.loading:after {
+            content: '';
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-left: 10px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
 
         #output {
             max-width: 620px;
             margin: 20px auto;
             height: 200px;
             padding: 10px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #2c2c2c; /* 深色背景 */
+            color: #ffa500; /* 橘色字體 */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);/* 柔和橘色光暈 */
             overflow-y: scroll;
             text-align: left;
-            border: 2px solid #007bff;
+            border: 2px solid #ffa500;
             /* 添加邊框以增加可見性 */
         }
+
 
         .center-text {
             text-align: center;
         }
+        /* 錯誤訊息樣式 */
+        .error-message {
+            color: #FF6347;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
 
+        /* 表格樣式 */
         table {
             max-width: 800px;
-            /* 增加表格最大寬度 */
             margin: 20px auto;
             border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border: 2px solid #007bff;
-            /* 添加邊框以增加可見性 */
-            /* overflow: hidden; */
-            /* 將溢出部分隱藏，使表格外觀更加整潔 */
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(255, 117, 24, 0.5);
+            border: 2px solid #FF7518;
         }
 
         th,
         td {
             padding: 12px 15px;
-            /* 調整單元格內邊距 */
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #555;
             text-align: center;
         }
 
         th {
-            background-color: #0077cc;
-            /* 將標題行背景顏色改為較柔和的藍色 */
-            color: #fff;
+            background-color: #FF7518;
+            color: #FFFFFF;
             font-weight: bold;
             text-transform: uppercase;
         }
 
-
         tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-            /* 隔行添加淺灰色背景，增加易讀性 */
+            background-color: #4d4d4d;
         }
 
         tbody tr:hover {
-            background-color: #e5e5e5;
-            /* 滑鼠懸停時添加淺灰色背景，增強交互效果 */
+            background-color: #5c5c5c;
         }
 
+        /* 切換按鈕容器 */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 44px;
+        }
+
+        .toggle-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            cursor: pointer;
+            border-radius: 34px;
+            transition: background-color 0.3s;
+        }
+
+
+        .toggle-label:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-input:checked + .toggle-label {
+            background-color: #4caf50;
+        }
+
+        .toggle-input:checked + .toggle-label:before {
+            transform: translateX(26px);
+        }
+        
         .left-side {
             float: left;
             width: 45%;
@@ -221,69 +332,12 @@
             flex: 1;
         }
 
-
-        header {
-            /* background-color: #333; */
-            color: #fff;
-            padding: 10px 20px;
-        }
-
         footer {
             /* background-color: #333; */
             color: #fff;
             padding: 10px 20px;
             text-align: center;
         }
-
-        /* 切換按鈕容器 */
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 44px;
-        }
-
-        /* 隱藏原生的checkbox */
-        .toggle-input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        /* 標籤樣式 */
-        .toggle-label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            cursor: pointer;
-            border-radius: 34px;
-            transition: background-color 0.3s;
-        }
-
-        /* 切換按鈕的滑塊 */
-        .toggle-label:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-
-        /* 當checkbox被選中時的樣式 */
-        .toggle-input:checked + .toggle-label {
-            background-color: #4caf50;
-        }
-
-        .toggle-input:checked + .toggle-label:before {
-            transform: translateX(26px);
-        }
-
 
         /* 在螢幕寬度小於某個閾值時，進行排列變更 */
         @media screen and (max-width: 1100px) {
@@ -301,7 +355,7 @@
 
 <body>
     <header>
-        <h2 title="網頁寬度小於1100px時自動變成一排">閃炫記錄工具</h2>
+        <h2 title="網頁寬度小於1100px時自動變成一排">閃炫記錄工具</h2>     
     </header>
 
     <div class="container">
@@ -323,11 +377,11 @@
                     <option value="艾麗亞">艾麗亞</option>
                     <option value="普力特">普力特</option>
                     <option value="琉德">琉德</option>
-                    <option value="優伊娜">優伊娜</option>
+                    <option value="優依娜">優依娜</option>
                     <option value="愛麗西亞">愛麗西亞</option>
                     <option value="殺人鯨">殺人鯨</option>
                 </select><br>
-                <b title="閃炫1:60 結合1:108">方塊類型:</b>
+                <b title="閃炫1:50 結合1:105">方塊類型:</b>
                 <div class="shape-options">
                     <input type="radio" id="flashy" name="shape" value="閃炫" onchange="updateStartCount()">
                     <label for="flashy">閃炫</label>
@@ -338,7 +392,7 @@
                     <input type="radio" id="scissors" name="shape" value="剪刀" onchange="updateStartCount()">
                     <label for="scissors">剪刀</label>
                 </div>
-                <h for="" title="">#傳說卷跟剪刀只要在最終數量那輸入幾張就好 他會累計</h>
+                <h for="" title="">#可以只儲存起始數量</h>
                 <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始數量:</label>
                 <input type="number" id="start" name="start" min="0"><br>
                 <label for="end" title="可以直接enter了">最終數量:</label>
@@ -353,7 +407,6 @@
         <div class="right-side">
             <form id="configForm">
                 <div id="output" title="限制200行"></div>
-                
                 <table id="statsTable">
                     <thead>
                         <tr>
@@ -368,7 +421,6 @@
 
                     </tbody>
                 </table>
-
                 <div>
                     <h for="" title="">排序啟動</h>
                     <div class="toggle-switch">
@@ -589,12 +641,12 @@
         //排序
         function sortTableByServerOrder(tableData) {
             //排序順序
-            const serverOrder = ["艾麗亞", "普力特", "琉德", "優伊娜", "愛麗西亞", "殺人鯨"];
+            const serverOrder = ["艾麗亞", "普力特", "琉德", "優依娜", "愛麗西亞", "殺人鯨"];
             const shapeOrder = ["閃炫", "結合", "傳說卷", "剪刀"];
 
         
 
-            let sortedServerStats = sortObjectByKeys(serverStats, serverOrder);
+            let sortedServerStats = sortObjectByKeys(tableData, serverOrder);
 
             for (let server in sortedServerStats) {
                 for (let account in sortedServerStats[server]) {
@@ -641,11 +693,11 @@
         //價格計算
         function Price(shape, startCount, endCount) {
             if (shape === "閃炫") {
-                price = (startCount - endCount) * 50;
+                price = (startCount - endCount) * 54;
             } else if (shape === "結合") {
                 price = (startCount - endCount) * 108;
             } else if (shape === "傳說卷") {
-                price = (endCount) * 200;
+                price = (endCount) * 100;
             } else if (shape === "剪刀") {
                 price = (endCount) * 150;
             }
@@ -728,8 +780,9 @@
                 }
             }
             if (isNaN(endCount)) { // | endCount < 0
-                alert("請確認最終數量。");
-                return;
+                //alert("請確認最終數量。");
+                //return;
+                endCount = startCount;
             }
 
             //計算
