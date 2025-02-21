@@ -22,7 +22,7 @@
         form {
             max-width: 600px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: #e9e9e9;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -340,7 +340,7 @@
                     <input type="radio" id="scissors" name="shape" value="剪刀" onchange="updateStartCount()">
                     <label for="scissors">剪刀</label>
                 </div>
-                <h for="" title="">#五周年快樂OvO</h>
+                <!---<h for="" title="">#五周年快樂OvO</h>--->
                 <label for="start" title="最下方表格中有儲存過的將會自動填寫">起始數量:</label>
                 <input type="number" id="start" name="start" min="0"><br>
                 <label for="end" title="可以直接enter了">最終數量:</label>
@@ -641,7 +641,7 @@
         //價格計算
         function Price(shape, startCount, endCount) {
             if (shape === "閃炫") {
-                price = (startCount - endCount) * 54;
+                price = (startCount - endCount) * 50;
             } else if (shape === "結合") {
                 price = (startCount - endCount) * 108;
             } else if (shape === "傳說卷") {
